@@ -1,0 +1,2911 @@
+{
+	"swagger": "2.0",
+	"info": {
+	  "version": "1.0",
+	  "title": "KLAS System",
+	  "description": "KLAS System을 구현하기 위한 API 요청/응답 예시",
+	  "contact": {}
+	},
+	"host": "localhost:3000",
+	"basePath": "/",
+	"securityDefinitions": {},
+	"schemes": [
+	  "http"
+	],
+	"consumes": [
+	  "application/json"
+	],
+	"produces": [
+	  "application/json"
+	],
+	"paths": {
+	  "/login": {
+		"post": {
+		  "description": "로그인에서는 유저 아이디와 비밀번호가 전달된다.\n\n올바르게 로그인이 된다면, 토큰이 전달된다.\n\n이후 모든 요청에서 HTTP 헤더에 토큰을 전달하여 처리한다.",
+		  "summary": "로그인",
+		  "tags": [
+			"로그인 관련"
+		  ],
+		  "operationId": "로그인",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "consumes": [
+			"application/x-www-form-urlencoded"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			},
+			{
+			  "name": "uid",
+			  "in": "formData",
+			  "required": true,
+			  "type": "string",
+			  "description": "유저 아이디"
+			},
+			{
+			  "name": "pw",
+			  "in": "formData",
+			  "required": true,
+			  "type": "string",
+			  "description": "유저 비밀번호"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%84%B1%EA%B3%B5%EC%8B%9C"
+			  },
+			  "examples": {
+				"application/json": {
+				  "token": "USER_TOKEN"
+				}
+			  },
+			  "headers": {}
+			},
+			"401": {
+			  "description": "Unauthorized",
+			  "schema": {
+				"$ref": "#/definitions/%EB%A1%9C%EA%B7%B8%EC%9D%B8%EC%8B%A4%ED%8C%A8%EC%8B%9C11"
+			  },
+			  "examples": {
+				"application/json": {
+				  "message": "Account is not exist."
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/": {
+		"get": {
+		  "description": "비 로그인시 로그인 창으로 이동하도록 구현한다.",
+		  "summary": "비로그인 상황",
+		  "tags": [
+			"메인 페이지"
+		  ],
+		  "operationId": "비로그인상황",
+		  "deprecated": false,
+		  "produces": [
+			"text/html"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"type": "string"
+			  },
+			  "examples": {
+				"text/html": "<head>\n    <meta http-equiv=\"refresh\" content=\"0;URL='/login'\" />\n</head>"
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/courses": {
+		"get": {
+		  "description": "이번학기에 수강하는 수업들의 목록을 출력한다.",
+		  "summary": "수업페이지2",
+		  "tags": [
+			"메인 페이지"
+		  ],
+		  "operationId": "수업페이지2",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EC%88%98%EC%97%85%ED%8E%98%EC%9D%B4%EC%A7%8014"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"count": 3,
+					"subjects": [
+					  {
+						"ClassID": "20251I02041",
+						"ClassName": "산학협력캡스톤설계",
+						"ClassProf": "이형근",
+						"ClassCount": 2,
+						"ClassTime": [
+						  "2:3:1",
+						  "4:3:1"
+						],
+						"ClassLocation": [
+						  "새빛관 102호",
+						  "새빛관 102호"
+						]
+					  },
+					  {
+						"ClassID": "20251I02042",
+						"ClassName": "임베디드시스템설계",
+						"ClassProf": "김태석",
+						"ClassCount": 2,
+						"ClassTime": [
+						  "1:3:1",
+						  "3:4:1"
+						],
+						"ClassLocation": [
+						  "새빛관 203호",
+						  "새빛관 304호"
+						]
+					  },
+					  {
+						"ClassID": "20251I02043",
+						"ClassName": "소프트웨어공학",
+						"ClassProf": "이기훈",
+						"ClassCount": 2,
+						"ClassTime": [
+						  "1:4:1",
+						  "3:3:1"
+						],
+						"ClassLocation": [
+						  "새빛관 203호",
+						  "새빛관 203호"
+						]
+					  }
+					]
+				  }
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/assignment": {
+		"get": {
+		  "description": "과목들에 대한 과제 목록을 모두 출력한다.",
+		  "summary": "과제페이지3",
+		  "tags": [
+			"메인 페이지"
+		  ],
+		  "operationId": "과제페이지3",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EA%B3%BC%EC%A0%9C%ED%8E%98%EC%9D%B4%EC%A7%8015"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subjects": [
+					{
+					  "ClassID": "20251I02041",
+					  "ClassName": "산학협력캡스톤설계",
+					  "Assignment": [
+						{
+						  "postID": 1,
+						  "postName": "졸업작품 계획서 제출",
+						  "postDate": "2025-03-25 23:59:00",
+						  "submit": 1
+						}
+					  ]
+					},
+					{
+					  "ClassID": "20251I02042",
+					  "ClassName": "임베디드시스템설계",
+					  "Assignment": []
+					},
+					{
+					  "ClassID": "20251I02043",
+					  "ClassName": "소프트웨어공학",
+					  "Assignment": [
+						{
+						  "postID": 2,
+						  "postName": "2차 과제",
+						  "postDate": "2025-05-07 23:59:00",
+						  "submit": 0
+						},
+						{
+						  "postID": 1,
+						  "postName": "1차 과제",
+						  "postDate": "2025-03-20 23:59:00",
+						  "submit": 1
+						}
+					  ]
+					}
+				  ]
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/timetable": {
+		"get": {
+		  "description": "시간표 출력을 위한 강의 목록 및 강의 시간/강의실 정보를 출력한다.",
+		  "summary": "Timetable",
+		  "tags": [
+			"메인 페이지"
+		  ],
+		  "operationId": "Timetable",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/Timetable"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"count": 3,
+					"subjects": [
+					  {
+						"ClassID": "20251I02041",
+						"ClassName": "산학협력캡스톤설계",
+						"ClassCount": 2,
+						"ClassTime": [
+						  "2:3:1",
+						  "4:3:1"
+						],
+						"ClassLocation": [
+						  "새빛관 102호",
+						  "새빛관 102호"
+						]
+					  },
+					  {
+						"ClassID": "20251I02042",
+						"ClassName": "임베디드시스템설계",
+						"ClassCount": 2,
+						"ClassTime": [
+						  "1:3:1",
+						  "3:4:1"
+						],
+						"ClassLocation": [
+						  "새빛관 203호",
+						  "새빛관 304호"
+						]
+					  },
+					  {
+						"ClassID": "20251I02043",
+						"ClassName": "소프트웨어공학",
+						"ClassCount": 2,
+						"ClassTime": [
+						  "1:4:1",
+						  "3:3:1"
+						],
+						"ClassLocation": [
+						  "새빛관 203호",
+						  "새빛관 203호"
+						]
+					  }
+					]
+				  }
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/grade": {
+		"get": {
+		  "description": "전체 성적 및 개별 과목들에 대한 성적을 출력한다.\n\n취득 학점, 성적을 표기한다.",
+		  "summary": "성적 페이지4",
+		  "tags": [
+			"메인 페이지"
+		  ],
+		  "operationId": "성적페이지4",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EC%84%B1%EC%A0%81%ED%8E%98%EC%9D%B4%EC%A7%8016"
+			  },
+			  "examples": {
+				"application/json": {
+				  "GPA": 3.8,
+				  "subject": {
+					"count": 4,
+					"subjects": [
+					  {
+						"ClassID": "20241I02042",
+						"ClassName": "시스템프로그래밍",
+						"ClassProf": "김태석",
+						"ClassSemester": 20241,
+						"ClassGrade": "A",
+						"ClassCredit": 3,
+						"ClassScore": 90
+					  },
+					  {
+						"ClassID": "20232I02022",
+						"ClassName": "데이터구조",
+						"ClassProf": "이기훈",
+						"ClassSemester": 20232,
+						"ClassGrade": "B+",
+						"ClassCredit": 3,
+						"ClassScore": 82
+					  },
+					  {
+						"ClassID": "20232I02021",
+						"ClassName": "디지털논리회로2",
+						"ClassProf": "이준환",
+						"ClassSemester": 20232,
+						"ClassGrade": "A+",
+						"ClassCredit": 3,
+						"ClassScore": 97
+					  },
+					  {
+						"ClassID": "20231I02021",
+						"ClassName": "디지털논리회로1",
+						"ClassProf": "이준환",
+						"ClassSemester": 20231,
+						"ClassGrade": "A+",
+						"ClassCredit": 3,
+						"ClassScore": 99
+					  }
+					]
+				  }
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/classNotice": {
+		"get": {
+		  "description": "특정 강의의 공지사항 게시판의 목록을 출력한다.",
+		  "summary": "강의 공지 게시판",
+		  "tags": [
+			"강의 공지"
+		  ],
+		  "operationId": "강의공지게시판",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			},
+			{
+			  "name": "classID",
+			  "in": "query",
+			  "required": true,
+			  "type": "string",
+			  "description": "강의 ID"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EA%B0%95%EC%9D%98%EA%B3%B5%EC%A7%80%EA%B2%8C%EC%8B%9C%ED%8C%90%28%ED%95%99%EC%83%9D%2917"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"ClassID": "20251I02043",
+					"ClassName": "소프트웨어공학",
+					"ClassProf": "이기훈",
+					"ClassCount": 2,
+					"ClassTime": [
+					  "1:4:1",
+					  "3:3:1"
+					],
+					"ClassLocation": [
+					  "새빛관 203호",
+					  "새빛관 203호"
+					],
+					"writeEnable": 0
+				  },
+				  "notice": [
+					{
+					  "postID": 9,
+					  "postName": "중간고사 성적 안내",
+					  "postDate": "2025-05-03 14:37:22"
+					},
+					{
+					  "postID": 8,
+					  "postName": "중간고사 시험장 및 범위 안내",
+					  "postDate": "2025-04-18 11:30:12"
+					},
+					{
+					  "postID": 7,
+					  "postName": "교내 취업박람회 안내",
+					  "postDate": "2025-04-02 15:15:09"
+					},
+					{
+					  "postID": 6,
+					  "postName": "과제 관련 안내사항",
+					  "postDate": "2025-03-21 15:30:01"
+					},
+					{
+					  "postID": 5,
+					  "postName": "과제 제출양식 안내",
+					  "postDate": "2025-03-12 20:54:42"
+					},
+					{
+					  "postID": 4,
+					  "postName": "공결 처리 기준 안내",
+					  "postDate": "2025-03-10 11:12:26"
+					},
+					{
+					  "postID": 3,
+					  "postName": "F학점 기준 공지",
+					  "postDate": "2025-03-07 09:05:51"
+					},
+					{
+					  "postID": 2,
+					  "postName": "강의 운영 방식 및 성적 처리 기준",
+					  "postDate": "2025-03-04 17:50:45"
+					},
+					{
+					  "postID": 1,
+					  "postName": "강의계획서",
+					  "postDate": "2025-02-26 12:00:32"
+					}
+				  ]
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/classNotice/notice": {
+		"get": {
+		  "description": "특정 강의의 공지사항 게시판의 특정 게시글 정보를 출력한다.",
+		  "summary": "강의 공지 게시글",
+		  "tags": [
+			"강의 공지"
+		  ],
+		  "operationId": "강의공지게시글",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			},
+			{
+			  "name": "classID",
+			  "in": "query",
+			  "required": true,
+			  "type": "string",
+			  "description": "강의 ID"
+			},
+			{
+			  "name": "postID",
+			  "in": "query",
+			  "required": true,
+			  "type": "integer",
+			  "format": "int32",
+			  "description": "게시글 ID"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EA%B0%95%EC%9D%98%EA%B3%B5%EC%A7%80%EA%B2%8C%EC%8B%9C%EA%B8%80%28%ED%95%99%EC%83%9D%2919"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"ClassID": "20251I02043",
+					"ClassName": "소프트웨어공학",
+					"ClassProf": "이기훈",
+					"ClassCount": 2,
+					"ClassTime": [
+					  "1:4:1",
+					  "3:3:1"
+					],
+					"ClassLocation": [
+					  "새빛관 203호",
+					  "새빛관 203호"
+					],
+					"writeEnable": 0
+				  },
+				  "notice": {
+					"postID": 1,
+					"postName": "강의계획서",
+					"postUserID": "12000001",
+					"postUserName": "이기훈",
+					"postDate": "2025-02-26 12:00:32",
+					"postContents": "강의계획서를 PDF로 올려드립니다.<br>첨부파일을 반드시 확인해주세요",
+					"postFile": "소프트웨어공학_강의계획서.pdf",
+					"comments": [
+					  {
+						"commentID": 1,
+						"commentUserID": "12000001",
+						"commentUserName": "이기훈",
+						"commentDate": "2025-02-27 12:00:32",
+						"commentContents": "일부 수정사항이 있어서 수정하였어요."
+					  }
+					]
+				  }
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/classBoard": {
+		"get": {
+		  "description": "특정 강의의 수강생 게시판의 목록을 출력한다.",
+		  "summary": "수강생 게시판1",
+		  "tags": [
+			"수강생 게시판"
+		  ],
+		  "operationId": "수강생게시판1",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			},
+			{
+			  "name": "classID",
+			  "in": "query",
+			  "required": true,
+			  "type": "string",
+			  "description": "강의 ID"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EC%88%98%EA%B0%95%EC%83%9D%EA%B2%8C%EC%8B%9C%ED%8C%90111"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"ClassID": "20251I02043",
+					"ClassName": "소프트웨어공학",
+					"ClassProf": "이기훈",
+					"ClassCount": 2,
+					"ClassTime": [
+					  "1:4:1",
+					  "3:3:1"
+					],
+					"ClassLocation": [
+					  "새빛관 203호",
+					  "새빛관 203호"
+					],
+					"writeEnable": 1
+				  },
+				  "board": [
+					{
+					  "postID": 2,
+					  "postUserName": "박정수",
+					  "postName": "공결 처리 관련 질문",
+					  "postDate": "2025-03-06 21:00:05"
+					},
+					{
+					  "postID": 1,
+					  "postUserName": "신성민",
+					  "postName": "안녕하세요, F학점 기준이 없어 게시글을 남김니다.",
+					  "postDate": "2025-03-05 12:11:26"
+					}
+				  ]
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/classBoard/board": {
+		"get": {
+		  "description": "특정 강의의 수강생 게시판의 특정 게시글 정보를 출력한다.",
+		  "summary": "수강생 게시글1",
+		  "tags": [
+			"수강생 게시판"
+		  ],
+		  "operationId": "수강생게시글1",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			},
+			{
+			  "name": "classID",
+			  "in": "query",
+			  "required": true,
+			  "type": "string",
+			  "description": "강의 ID"
+			},
+			{
+			  "name": "postID",
+			  "in": "query",
+			  "required": true,
+			  "type": "integer",
+			  "format": "int32",
+			  "description": "게시글 ID"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EC%88%98%EA%B0%95%EC%83%9D%EA%B2%8C%EC%8B%9C%EA%B8%80%28%EB%B9%84%EC%9E%91%EC%84%B1%EC%9E%90%29112"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"ClassID": "20251I02043",
+					"ClassName": "소프트웨어공학",
+					"ClassProf": "이기훈",
+					"ClassCount": 2,
+					"ClassTime": [
+					  "1:4:1",
+					  "3:3:1"
+					],
+					"ClassLocation": [
+					  "새빛관 203호",
+					  "새빛관 203호"
+					],
+					"writeEnable": 0
+				  },
+				  "notice": {
+					"postID": 1,
+					"postUserName": "신성민",
+					"postUserID": "2020202077",
+					"postName": "안녕하세요, F학점 기준이 없어 게시글을 남김니다.",
+					"postDate": "2025-03-05 12:11:26",
+					"postContents": "교수님 안녕하십니까? 수강생 신성민입니다.<br>다름이아니라, F학점 기준에 대해 알고싶습니다.<br>감사합니다.",
+					"postFile": "소프트웨어공학_강의계획서.pdf",
+					"comments": [
+					  {
+						"commentID": 1,
+						"commentUserID": "12000001",
+						"commentUserName": "이기훈",
+						"commentDate": "2025-03-05 14:00:32",
+						"commentContents": "해당부분 설명 공지 올려드릴께요."
+					  },
+					  {
+						"commentID": 1,
+						"commentUserID": "2020202077",
+						"commentUserName": "신성민",
+						"commentDate": "2025-03-05 14:30:13",
+						"commentContents": "교수님 감사합니다."
+					  }
+					]
+				  }
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/classAssignment": {
+		"get": {
+		  "description": "특정 강의의 과제 목록을 출력한다.",
+		  "summary": "과제 목록2",
+		  "tags": [
+			"과제"
+		  ],
+		  "operationId": "과제목록2",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			},
+			{
+			  "name": "classID",
+			  "in": "query",
+			  "required": true,
+			  "type": "string",
+			  "description": "강의 ID"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EA%B3%BC%EC%A0%9C%EB%AA%A9%EB%A1%9D%28%ED%95%99%EC%83%9D%29114"
+			  },
+			  "examples": {
+				"application/json": {
+				  "subject": {
+					"ClassID": "20251I02043",
+					"ClassName": "소프트웨어공학",
+					"ClassProf": "이기훈",
+					"ClassCount": 2,
+					"ClassTime": [
+					  "1:4:1",
+					  "3:3:1"
+					],
+					"ClassLocation": [
+					  "새빛관 203호",
+					  "새빛관 203호"
+					],
+					"writeEnable": 0
+				  },
+				  "assignment": [
+					{
+					  "postID": 2,
+					  "postName": "2차 과제",
+					  "postDate": "2025-05-07 23:59:00"
+					},
+					{
+					  "postID": 1,
+					  "postName": "1차 과제",
+					  "postDate": "2025-03-20 23:59:00"
+					}
+				  ]
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/accounts": {
+		"get": {
+		  "description": "가입된 모든 계정의 정보를 출력한다.",
+		  "summary": "계정관리5",
+		  "tags": [
+			"관리자"
+		  ],
+		  "operationId": "계정관리5",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"$ref": "#/definitions/%EA%B3%84%EC%A0%95%EA%B4%80%EB%A6%AC115"
+			  },
+			  "examples": {
+				"application/json": {
+				  "accounts": {
+					"student": {
+					  "userID": "202312345",
+					  "userName": "신성민",
+					  "userType": "student",
+					  "email": "cydiazero@kw.ac.kr",
+					  "status": "active",
+					  "lastLogin": "2025-05-20T09:12:45"
+					},
+					"professor": {
+					  "userID": "12003012",
+					  "userName": "이형근",
+					  "userType": "professor",
+					  "email": "leehk@kw.ac.kr",
+					  "status": "active",
+					  "lastLogin": "2025-05-20T08:03:22"
+					},
+					"admin": {
+					  "userID": "admin",
+					  "userName": "관리자",
+					  "userType": "admin",
+					  "email": "admin@kw.ac.kr",
+					  "status": "active",
+					  "lastLogin": "2025-05-19T23:58:17"
+					}
+				  }
+				}
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  },
+	  "/\bclass": {
+		"get": {
+		  "description": "이번학기에 수강하는 모든 수업들의 목록을 출력한다.",
+		  "summary": "수업목록 관리6",
+		  "tags": [
+			"관리자"
+		  ],
+		  "operationId": "수업목록관리6",
+		  "deprecated": false,
+		  "produces": [
+			"application/json"
+		  ],
+		  "parameters": [
+			{
+			  "name": "Authorization",
+			  "in": "header",
+			  "required": false,
+			  "default": "Bearer {token}",
+			  "type": "string"
+			}
+		  ],
+		  "responses": {
+			"default": {
+			  "description": "",
+			  "schema": {
+				"type": "string"
+			  },
+			  "examples": {
+				"application/json": "{\n    \"subjects\": [\n        {\n            \"ClassID\": \"20251I02041\",\n            \"ClassName\": \"산학협력캡스톤설계\",\n            \"ClassProf\": \"이형근\",\n            \"ClassCount\": 2,\n            \"ClassTime\": [\"2:3:1\", \"4:3:1\"],\n            \"ClassLocation\": [\"새빛관 102호\", \"새빛관 102호\"]\n        },\n        {\n            \"ClassID\": \"20251I02042\",\n            \"ClassName\": \"임베디드시스템설계\",\n            \"ClassProf\": \"김태석\",\n            \"ClassCount\": 2,\n            \"ClassTime\": [\"1:3:1\", \"3:4:1\"],\n            \"ClassLocation\": [\"새빛관 203호\", \"새빛관 304호\"]\n        },\n        {\n            \"ClassID\": \"20251I02043\",\n            \"ClassName\": \"소프트웨어공학\",\n            \"ClassProf\": \"이기훈\",\n            \"ClassCount\": 2,\n            \"ClassTime\": [\"1:4:1\", \"3:3:1\"],\n            \"ClassLocation\": [\"새빛관 203호\", \"새빛관 203호\"]\n        }\n    ]\n}\n}"
+			  },
+			  "headers": {}
+			}
+		  }
+		}
+	  }
+	},
+	"definitions": {
+	  "로그인성공시": {
+		"title": "로그인성공시",
+		"example": {
+		  "token": "USER_TOKEN"
+		},
+		"type": "object",
+		"properties": {
+		  "token": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "token"
+		]
+	  },
+	  "로그인실패시11": {
+		"title": "로그인실패시11",
+		"example": {
+		  "message": "Account is not exist."
+		},
+		"type": "object",
+		"properties": {
+		  "message": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "message"
+		]
+	  },
+	  "학생12": {
+		"title": "학생12",
+		"example": {
+		  "subject": {
+			"count": 3,
+			"subjects": [
+			  {
+				"ClassID": "20251I02041",
+				"ClassName": "산학협력캡스톤설계",
+				"ClassProf": "이형근",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "2:3:1",
+				  "4:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 102호",
+				  "새빛관 102호"
+				]
+			  },
+			  {
+				"ClassID": "20251I02042",
+				"ClassName": "임베디드시스템설계",
+				"ClassProf": "김태석",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:3:1",
+				  "3:4:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 304호"
+				]
+			  },
+			  {
+				"ClassID": "20251I02043",
+				"ClassName": "소프트웨어공학",
+				"ClassProf": "이기훈",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:4:1",
+				  "3:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 203호"
+				]
+			  }
+			]
+		  },
+		  "GPA": 3.8,
+		  "assignment": 1,
+		  "activity": [
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "type": "assignment",
+			  "postID": 2,
+			  "postName": "2차 과제",
+			  "postDate": "2025-05-07 23:59:00"
+			},
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "type": "notice",
+			  "postID": 9,
+			  "postUserName": "이기훈",
+			  "postName": "중간고사 성적 안내",
+			  "postDate": "2025-05-03 14:37:22"
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject"
+			  },
+			  {}
+			]
+		  },
+		  "GPA": {
+			"type": "number",
+			"format": "double"
+		  },
+		  "assignment": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "activity": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Activity"
+			}
+		  }
+		},
+		"required": [
+		  "subject",
+		  "GPA",
+		  "assignment",
+		  "activity"
+		]
+	  },
+	  "Subject": {
+		"title": "Subject",
+		"example": {
+		  "count": 3,
+		  "subjects": [
+			{
+			  "ClassID": "20251I02041",
+			  "ClassName": "산학협력캡스톤설계",
+			  "ClassProf": "이형근",
+			  "ClassCount": 2,
+			  "ClassTime": [
+				"2:3:1",
+				"4:3:1"
+			  ],
+			  "ClassLocation": [
+				"새빛관 102호",
+				"새빛관 102호"
+			  ]
+			},
+			{
+			  "ClassID": "20251I02042",
+			  "ClassName": "임베디드시스템설계",
+			  "ClassProf": "김태석",
+			  "ClassCount": 2,
+			  "ClassTime": [
+				"1:3:1",
+				"3:4:1"
+			  ],
+			  "ClassLocation": [
+				"새빛관 203호",
+				"새빛관 304호"
+			  ]
+			},
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "ClassProf": "이기훈",
+			  "ClassCount": 2,
+			  "ClassTime": [
+				"1:4:1",
+				"3:3:1"
+			  ],
+			  "ClassLocation": [
+				"새빛관 203호",
+				"새빛관 203호"
+			  ]
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "count": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "subjects": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Subject1"
+			}
+		  }
+		},
+		"required": [
+		  "count",
+		  "subjects"
+		]
+	  },
+	  "Subject1": {
+		"title": "Subject1",
+		"example": {
+		  "ClassID": "20251I02041",
+		  "ClassName": "산학협력캡스톤설계",
+		  "ClassProf": "이형근",
+		  "ClassCount": 2,
+		  "ClassTime": [
+			"2:3:1",
+			"4:3:1"
+		  ],
+		  "ClassLocation": [
+			"새빛관 102호",
+			"새빛관 102호"
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "ClassID": {
+			"type": "string"
+		  },
+		  "ClassName": {
+			"type": "string"
+		  },
+		  "ClassProf": {
+			"type": "string"
+		  },
+		  "ClassCount": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "ClassTime": {
+			"type": "array",
+			"items": {
+			  "type": "string"
+			}
+		  },
+		  "ClassLocation": {
+			"type": "array",
+			"items": {
+			  "type": "string"
+			}
+		  }
+		},
+		"required": [
+		  "ClassID",
+		  "ClassName",
+		  "ClassProf",
+		  "ClassCount",
+		  "ClassTime",
+		  "ClassLocation"
+		]
+	  },
+	  "Activity": {
+		"title": "Activity",
+		"example": {
+		  "ClassID": "20251I02043",
+		  "ClassName": "소프트웨어공학",
+		  "type": "assignment",
+		  "postID": 2,
+		  "postName": "2차 과제",
+		  "postDate": "2025-05-07 23:59:00"
+		},
+		"type": "object",
+		"properties": {
+		  "ClassID": {
+			"type": "string"
+		  },
+		  "ClassName": {
+			"type": "string"
+		  },
+		  "type": {
+			"type": "string"
+		  },
+		  "postID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "postName": {
+			"type": "string"
+		  },
+		  "postDate": {
+			"type": "string"
+		  },
+		  "postUserName": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "ClassID",
+		  "ClassName",
+		  "type",
+		  "postID",
+		  "postName",
+		  "postDate"
+		]
+	  },
+	  "교수13": {
+		"title": "교수13",
+		"example": {
+		  "subject": {
+			"count": 1,
+			"subjects": [
+			  {
+				"ClassID": "20251I02043",
+				"ClassName": "소프트웨어공학",
+				"ClassProf": "이기훈",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:4:1",
+				  "3:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 203호"
+				]
+			  }
+			]
+		  },
+		  "assignment": 1,
+		  "activity": [
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "type": "assignment",
+			  "postID": 2,
+			  "postName": "2차 과제",
+			  "postDate": "2025-05-07 23:59:00"
+			},
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "type": "notice",
+			  "postID": 9,
+			  "postUserName": "이기훈",
+			  "postName": "중간고사 성적 안내",
+			  "postDate": "2025-05-03 14:37:22"
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject"
+			  },
+			  {}
+			]
+		  },
+		  "assignment": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "activity": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Activity"
+			}
+		  }
+		},
+		"required": [
+		  "subject",
+		  "assignment",
+		  "activity"
+		]
+	  },
+	  "수업페이지14": {
+		"title": "수업페이지14",
+		"example": {
+		  "subject": {
+			"count": 3,
+			"subjects": [
+			  {
+				"ClassID": "20251I02041",
+				"ClassName": "산학협력캡스톤설계",
+				"ClassProf": "이형근",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "2:3:1",
+				  "4:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 102호",
+				  "새빛관 102호"
+				]
+			  },
+			  {
+				"ClassID": "20251I02042",
+				"ClassName": "임베디드시스템설계",
+				"ClassProf": "김태석",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:3:1",
+				  "3:4:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 304호"
+				]
+			  },
+			  {
+				"ClassID": "20251I02043",
+				"ClassName": "소프트웨어공학",
+				"ClassProf": "이기훈",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:4:1",
+				  "3:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 203호"
+				]
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "subject"
+		]
+	  },
+	  "과제페이지15": {
+		"title": "과제페이지15",
+		"example": {
+		  "subjects": [
+			{
+			  "ClassID": "20251I02041",
+			  "ClassName": "산학협력캡스톤설계",
+			  "Assignment": [
+				{
+				  "postID": 1,
+				  "postName": "졸업작품 계획서 제출",
+				  "postDate": "2025-03-25 23:59:00",
+				  "submit": 1
+				}
+			  ]
+			},
+			{
+			  "ClassID": "20251I02042",
+			  "ClassName": "임베디드시스템설계",
+			  "Assignment": []
+			},
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "Assignment": [
+				{
+				  "postID": 2,
+				  "postName": "2차 과제",
+				  "postDate": "2025-05-07 23:59:00",
+				  "submit": 0
+				},
+				{
+				  "postID": 1,
+				  "postName": "1차 과제",
+				  "postDate": "2025-03-20 23:59:00",
+				  "submit": 1
+				}
+			  ]
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subjects": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Subject6"
+			}
+		  }
+		},
+		"required": [
+		  "subjects"
+		]
+	  },
+	  "Subject6": {
+		"title": "Subject6",
+		"example": {
+		  "ClassID": "20251I02041",
+		  "ClassName": "산학협력캡스톤설계",
+		  "Assignment": [
+			{
+			  "postID": 1,
+			  "postName": "졸업작품 계획서 제출",
+			  "postDate": "2025-03-25 23:59:00",
+			  "submit": 1
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "ClassID": {
+			"type": "string"
+		  },
+		  "ClassName": {
+			"type": "string"
+		  },
+		  "Assignment": {
+			"type": "array",
+			"items": {}
+		  }
+		},
+		"required": [
+		  "ClassID",
+		  "ClassName",
+		  "Assignment"
+		]
+	  },
+	  "Assignment": {
+		"title": "Assignment",
+		"example": {
+		  "postID": 1,
+		  "postName": "졸업작품 계획서 제출",
+		  "postDate": "2025-03-25 23:59:00",
+		  "submit": 1
+		},
+		"type": "object",
+		"properties": {
+		  "postID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "postName": {
+			"type": "string"
+		  },
+		  "postDate": {
+			"type": "string"
+		  },
+		  "submit": {
+			"type": "integer",
+			"format": "int32"
+		  }
+		}
+	  },
+	  "Timetable": {
+		"title": "Timetable",
+		"example": {
+		  "subject": {
+			"count": 3,
+			"subjects": [
+			  {
+				"ClassID": "20251I02041",
+				"ClassName": "산학협력캡스톤설계",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "2:3:1",
+				  "4:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 102호",
+				  "새빛관 102호"
+				]
+			  },
+			  {
+				"ClassID": "20251I02042",
+				"ClassName": "임베디드시스템설계",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:3:1",
+				  "3:4:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 304호"
+				]
+			  },
+			  {
+				"ClassID": "20251I02043",
+				"ClassName": "소프트웨어공학",
+				"ClassCount": 2,
+				"ClassTime": [
+				  "1:4:1",
+				  "3:3:1"
+				],
+				"ClassLocation": [
+				  "새빛관 203호",
+				  "새빛관 203호"
+				]
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject7"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "subject"
+		]
+	  },
+	  "Subject7": {
+		"title": "Subject7",
+		"example": {
+		  "count": 3,
+		  "subjects": [
+			{
+			  "ClassID": "20251I02041",
+			  "ClassName": "산학협력캡스톤설계",
+			  "ClassCount": 2,
+			  "ClassTime": [
+				"2:3:1",
+				"4:3:1"
+			  ],
+			  "ClassLocation": [
+				"새빛관 102호",
+				"새빛관 102호"
+			  ]
+			},
+			{
+			  "ClassID": "20251I02042",
+			  "ClassName": "임베디드시스템설계",
+			  "ClassCount": 2,
+			  "ClassTime": [
+				"1:3:1",
+				"3:4:1"
+			  ],
+			  "ClassLocation": [
+				"새빛관 203호",
+				"새빛관 304호"
+			  ]
+			},
+			{
+			  "ClassID": "20251I02043",
+			  "ClassName": "소프트웨어공학",
+			  "ClassCount": 2,
+			  "ClassTime": [
+				"1:4:1",
+				"3:3:1"
+			  ],
+			  "ClassLocation": [
+				"새빛관 203호",
+				"새빛관 203호"
+			  ]
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "count": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "subjects": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Subject8"
+			}
+		  }
+		},
+		"required": [
+		  "count",
+		  "subjects"
+		]
+	  },
+	  "Subject8": {
+		"title": "Subject8",
+		"example": {
+		  "ClassID": "20251I02041",
+		  "ClassName": "산학협력캡스톤설계",
+		  "ClassCount": 2,
+		  "ClassTime": [
+			"2:3:1",
+			"4:3:1"
+		  ],
+		  "ClassLocation": [
+			"새빛관 102호",
+			"새빛관 102호"
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "ClassID": {
+			"type": "string"
+		  },
+		  "ClassName": {
+			"type": "string"
+		  },
+		  "ClassCount": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "ClassTime": {
+			"type": "array",
+			"items": {
+			  "type": "string"
+			}
+		  },
+		  "ClassLocation": {
+			"type": "array",
+			"items": {
+			  "type": "string"
+			}
+		  }
+		},
+		"required": [
+		  "ClassID",
+		  "ClassName",
+		  "ClassCount",
+		  "ClassTime",
+		  "ClassLocation"
+		]
+	  },
+	  "성적페이지16": {
+		"title": "성적페이지16",
+		"example": {
+		  "GPA": 3.8,
+		  "subject": {
+			"count": 4,
+			"subjects": [
+			  {
+				"ClassID": "20241I02042",
+				"ClassName": "시스템프로그래밍",
+				"ClassProf": "김태석",
+				"ClassSemester": 20241,
+				"ClassGrade": "A",
+				"ClassCredit": 3,
+				"ClassScore": 90
+			  },
+			  {
+				"ClassID": "20232I02022",
+				"ClassName": "데이터구조",
+				"ClassProf": "이기훈",
+				"ClassSemester": 20232,
+				"ClassGrade": "B+",
+				"ClassCredit": 3,
+				"ClassScore": 82
+			  },
+			  {
+				"ClassID": "20232I02021",
+				"ClassName": "디지털논리회로2",
+				"ClassProf": "이준환",
+				"ClassSemester": 20232,
+				"ClassGrade": "A+",
+				"ClassCredit": 3,
+				"ClassScore": 97
+			  },
+			  {
+				"ClassID": "20231I02021",
+				"ClassName": "디지털논리회로1",
+				"ClassProf": "이준환",
+				"ClassSemester": 20231,
+				"ClassGrade": "A+",
+				"ClassCredit": 3,
+				"ClassScore": 99
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "GPA": {
+			"type": "number",
+			"format": "double"
+		  },
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject9"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "GPA",
+		  "subject"
+		]
+	  },
+	  "Subject9": {
+		"title": "Subject9",
+		"example": {
+		  "count": 4,
+		  "subjects": [
+			{
+			  "ClassID": "20241I02042",
+			  "ClassName": "시스템프로그래밍",
+			  "ClassProf": "김태석",
+			  "ClassSemester": 20241,
+			  "ClassGrade": "A",
+			  "ClassCredit": 3,
+			  "ClassScore": 90
+			},
+			{
+			  "ClassID": "20232I02022",
+			  "ClassName": "데이터구조",
+			  "ClassProf": "이기훈",
+			  "ClassSemester": 20232,
+			  "ClassGrade": "B+",
+			  "ClassCredit": 3,
+			  "ClassScore": 82
+			},
+			{
+			  "ClassID": "20232I02021",
+			  "ClassName": "디지털논리회로2",
+			  "ClassProf": "이준환",
+			  "ClassSemester": 20232,
+			  "ClassGrade": "A+",
+			  "ClassCredit": 3,
+			  "ClassScore": 97
+			},
+			{
+			  "ClassID": "20231I02021",
+			  "ClassName": "디지털논리회로1",
+			  "ClassProf": "이준환",
+			  "ClassSemester": 20231,
+			  "ClassGrade": "A+",
+			  "ClassCredit": 3,
+			  "ClassScore": 99
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "count": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "subjects": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Subject10"
+			}
+		  }
+		},
+		"required": [
+		  "count",
+		  "subjects"
+		]
+	  },
+	  "Subject10": {
+		"title": "Subject10",
+		"example": {
+		  "ClassID": "20241I02042",
+		  "ClassName": "시스템프로그래밍",
+		  "ClassProf": "김태석",
+		  "ClassSemester": 20241,
+		  "ClassGrade": "A",
+		  "ClassCredit": 3,
+		  "ClassScore": 90
+		},
+		"type": "object",
+		"properties": {
+		  "ClassID": {
+			"type": "string"
+		  },
+		  "ClassName": {
+			"type": "string"
+		  },
+		  "ClassProf": {
+			"type": "string"
+		  },
+		  "ClassSemester": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "ClassGrade": {
+			"type": "string"
+		  },
+		  "ClassCredit": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "ClassScore": {
+			"type": "integer",
+			"format": "int32"
+		  }
+		},
+		"required": [
+		  "ClassID",
+		  "ClassName",
+		  "ClassProf",
+		  "ClassSemester",
+		  "ClassGrade",
+		  "ClassCredit",
+		  "ClassScore"
+		]
+	  },
+	  "강의공지게시판(학생)17": {
+		"title": "강의공지게시판(학생)17",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 0
+		  },
+		  "notice": [
+			{
+			  "postID": 9,
+			  "postName": "중간고사 성적 안내",
+			  "postDate": "2025-05-03 14:37:22"
+			},
+			{
+			  "postID": 8,
+			  "postName": "중간고사 시험장 및 범위 안내",
+			  "postDate": "2025-04-18 11:30:12"
+			},
+			{
+			  "postID": 7,
+			  "postName": "교내 취업박람회 안내",
+			  "postDate": "2025-04-02 15:15:09"
+			},
+			{
+			  "postID": 6,
+			  "postName": "과제 관련 안내사항",
+			  "postDate": "2025-03-21 15:30:01"
+			},
+			{
+			  "postID": 5,
+			  "postName": "과제 제출양식 안내",
+			  "postDate": "2025-03-12 20:54:42"
+			},
+			{
+			  "postID": 4,
+			  "postName": "공결 처리 기준 안내",
+			  "postDate": "2025-03-10 11:12:26"
+			},
+			{
+			  "postID": 3,
+			  "postName": "F학점 기준 공지",
+			  "postDate": "2025-03-07 09:05:51"
+			},
+			{
+			  "postID": 2,
+			  "postName": "강의 운영 방식 및 성적 처리 기준",
+			  "postDate": "2025-03-04 17:50:45"
+			},
+			{
+			  "postID": 1,
+			  "postName": "강의계획서",
+			  "postDate": "2025-02-26 12:00:32"
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "notice": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Notice"
+			}
+		  }
+		},
+		"required": [
+		  "subject",
+		  "notice"
+		]
+	  },
+	  "Subject11": {
+		"title": "Subject11",
+		"example": {
+		  "ClassID": "20251I02043",
+		  "ClassName": "소프트웨어공학",
+		  "ClassProf": "이기훈",
+		  "ClassCount": 2,
+		  "ClassTime": [
+			"1:4:1",
+			"3:3:1"
+		  ],
+		  "ClassLocation": [
+			"새빛관 203호",
+			"새빛관 203호"
+		  ],
+		  "writeEnable": 0
+		},
+		"type": "object",
+		"properties": {
+		  "ClassID": {
+			"type": "string"
+		  },
+		  "ClassName": {
+			"type": "string"
+		  },
+		  "ClassProf": {
+			"type": "string"
+		  },
+		  "ClassCount": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "ClassTime": {
+			"type": "array",
+			"items": {
+			  "type": "string"
+			}
+		  },
+		  "ClassLocation": {
+			"type": "array",
+			"items": {
+			  "type": "string"
+			}
+		  },
+		  "writeEnable": {
+			"type": "integer",
+			"format": "int32"
+		  }
+		},
+		"required": [
+		  "ClassID",
+		  "ClassName",
+		  "ClassProf",
+		  "ClassCount",
+		  "ClassTime",
+		  "ClassLocation",
+		  "writeEnable"
+		]
+	  },
+	  "Notice": {
+		"title": "Notice",
+		"example": {
+		  "postID": 9,
+		  "postName": "중간고사 성적 안내",
+		  "postDate": "2025-05-03 14:37:22"
+		},
+		"type": "object",
+		"properties": {
+		  "postID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "postName": {
+			"type": "string"
+		  },
+		  "postDate": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "postID",
+		  "postName",
+		  "postDate"
+		]
+	  },
+	  "강의공지게시판(교수)18": {
+		"title": "강의공지게시판(교수)18",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 1
+		  },
+		  "notice": [
+			{
+			  "postID": 9,
+			  "postName": "중간고사 성적 안내",
+			  "postDate": "2025-05-03 14:37:22"
+			},
+			{
+			  "postID": 8,
+			  "postName": "중간고사 시험장 및 범위 안내",
+			  "postDate": "2025-04-18 11:30:12"
+			},
+			{
+			  "postID": 7,
+			  "postName": "교내 취업박람회 안내",
+			  "postDate": "2025-04-02 15:15:09"
+			},
+			{
+			  "postID": 6,
+			  "postName": "과제 관련 안내사항",
+			  "postDate": "2025-03-21 15:30:01"
+			},
+			{
+			  "postID": 5,
+			  "postName": "과제 제출양식 안내",
+			  "postDate": "2025-03-12 20:54:42"
+			},
+			{
+			  "postID": 4,
+			  "postName": "공결 처리 기준 안내",
+			  "postDate": "2025-03-10 11:12:26"
+			},
+			{
+			  "postID": 3,
+			  "postName": "F학점 기준 공지",
+			  "postDate": "2025-03-07 09:05:51"
+			},
+			{
+			  "postID": 2,
+			  "postName": "강의 운영 방식 및 성적 처리 기준",
+			  "postDate": "2025-03-04 17:50:45"
+			},
+			{
+			  "postID": 1,
+			  "postName": "강의계획서",
+			  "postDate": "2025-02-26 12:00:32"
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "notice": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Notice"
+			}
+		  }
+		},
+		"required": [
+		  "subject",
+		  "notice"
+		]
+	  },
+	  "강의공지게시글(학생)19": {
+		"title": "강의공지게시글(학생)19",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 0
+		  },
+		  "notice": {
+			"postID": 1,
+			"postName": "강의계획서",
+			"postUserID": "12000001",
+			"postUserName": "이기훈",
+			"postDate": "2025-02-26 12:00:32",
+			"postContents": "강의계획서를 PDF로 올려드립니다.<br>첨부파일을 반드시 확인해주세요",
+			"postFile": "소프트웨어공학_강의계획서.pdf",
+			"comments": [
+			  {
+				"commentID": 1,
+				"commentUserID": "12000001",
+				"commentUserName": "이기훈",
+				"commentDate": "2025-02-27 12:00:32",
+				"commentContents": "일부 수정사항이 있어서 수정하였어요."
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "notice": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Notice2"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "subject",
+		  "notice"
+		]
+	  },
+	  "Notice2": {
+		"title": "Notice2",
+		"example": {
+		  "postID": 1,
+		  "postName": "강의계획서",
+		  "postUserID": "12000001",
+		  "postUserName": "이기훈",
+		  "postDate": "2025-02-26 12:00:32",
+		  "postContents": "강의계획서를 PDF로 올려드립니다.<br>첨부파일을 반드시 확인해주세요",
+		  "postFile": "소프트웨어공학_강의계획서.pdf",
+		  "comments": [
+			{
+			  "commentID": 1,
+			  "commentUserID": "12000001",
+			  "commentUserName": "이기훈",
+			  "commentDate": "2025-02-27 12:00:32",
+			  "commentContents": "일부 수정사항이 있어서 수정하였어요."
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "postID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "postName": {
+			"type": "string"
+		  },
+		  "postUserID": {
+			"type": "string"
+		  },
+		  "postUserName": {
+			"type": "string"
+		  },
+		  "postDate": {
+			"type": "string"
+		  },
+		  "postContents": {
+			"type": "string"
+		  },
+		  "postFile": {
+			"type": "string"
+		  },
+		  "comments": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Comment"
+			}
+		  }
+		},
+		"required": [
+		  "postID",
+		  "postName",
+		  "postUserID",
+		  "postUserName",
+		  "postDate",
+		  "postContents",
+		  "postFile",
+		  "comments"
+		]
+	  },
+	  "Comment": {
+		"title": "Comment",
+		"example": {
+		  "commentID": 1,
+		  "commentUserID": "12000001",
+		  "commentUserName": "이기훈",
+		  "commentDate": "2025-02-27 12:00:32",
+		  "commentContents": "일부 수정사항이 있어서 수정하였어요."
+		},
+		"type": "object",
+		"properties": {
+		  "commentID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "commentUserID": {
+			"type": "string"
+		  },
+		  "commentUserName": {
+			"type": "string"
+		  },
+		  "commentDate": {
+			"type": "string"
+		  },
+		  "commentContents": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "commentID",
+		  "commentUserID",
+		  "commentUserName",
+		  "commentDate",
+		  "commentContents"
+		]
+	  },
+	  "강의공지게시글(교수)110": {
+		"title": "강의공지게시글(교수)110",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 1
+		  },
+		  "notice": {
+			"postID": 1,
+			"postName": "강의계획서",
+			"postUserID": "12000001",
+			"postUserName": "이기훈",
+			"postDate": "2025-02-26 12:00:32",
+			"postContents": "강의계획서를 PDF로 올려드립니다.<br>첨부파일을 반드시 확인해주세요",
+			"postFile": "소프트웨어공학_강의계획서.pdf",
+			"comments": [
+			  {
+				"commentID": 1,
+				"commentUserID": "12000001",
+				"commentUserName": "이기훈",
+				"commentDate": "2025-02-27 12:00:32",
+				"commentContents": "일부 수정사항이 있어서 수정하였어요."
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "notice": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Notice2"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "subject",
+		  "notice"
+		]
+	  },
+	  "수강생게시판111": {
+		"title": "수강생게시판111",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 1
+		  },
+		  "board": [
+			{
+			  "postID": 2,
+			  "postUserName": "박정수",
+			  "postName": "공결 처리 관련 질문",
+			  "postDate": "2025-03-06 21:00:05"
+			},
+			{
+			  "postID": 1,
+			  "postUserName": "신성민",
+			  "postName": "안녕하세요, F학점 기준이 없어 게시글을 남김니다.",
+			  "postDate": "2025-03-05 12:11:26"
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "board": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Board"
+			}
+		  }
+		},
+		"required": [
+		  "subject",
+		  "board"
+		]
+	  },
+	  "Board": {
+		"title": "Board",
+		"example": {
+		  "postID": 2,
+		  "postUserName": "박정수",
+		  "postName": "공결 처리 관련 질문",
+		  "postDate": "2025-03-06 21:00:05"
+		},
+		"type": "object",
+		"properties": {
+		  "postID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "postUserName": {
+			"type": "string"
+		  },
+		  "postName": {
+			"type": "string"
+		  },
+		  "postDate": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "postID",
+		  "postUserName",
+		  "postName",
+		  "postDate"
+		]
+	  },
+	  "수강생게시글(비작성자)112": {
+		"title": "수강생게시글(비작성자)112",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 0
+		  },
+		  "notice": {
+			"postID": 1,
+			"postUserName": "신성민",
+			"postUserID": "2020202077",
+			"postName": "안녕하세요, F학점 기준이 없어 게시글을 남김니다.",
+			"postDate": "2025-03-05 12:11:26",
+			"postContents": "교수님 안녕하십니까? 수강생 신성민입니다.<br>다름이아니라, F학점 기준에 대해 알고싶습니다.<br>감사합니다.",
+			"postFile": "소프트웨어공학_강의계획서.pdf",
+			"comments": [
+			  {
+				"commentID": 1,
+				"commentUserID": "12000001",
+				"commentUserName": "이기훈",
+				"commentDate": "2025-03-05 14:00:32",
+				"commentContents": "해당부분 설명 공지 올려드릴께요."
+			  },
+			  {
+				"commentID": 1,
+				"commentUserID": "2020202077",
+				"commentUserName": "신성민",
+				"commentDate": "2025-03-05 14:30:13",
+				"commentContents": "교수님 감사합니다."
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "notice": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Notice2"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "subject",
+		  "notice"
+		]
+	  },
+	  "수강생게시글(작성자)113": {
+		"title": "수강생게시글(작성자)113",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 1
+		  },
+		  "notice": {
+			"postID": 1,
+			"postUserName": "신성민",
+			"postUserID": "2020202077",
+			"postName": "안녕하세요, F학점 기준이 없어 게시글을 남김니다.",
+			"postDate": "2025-03-05 12:11:26",
+			"postContents": "교수님 안녕하십니까? 수강생 신성민입니다.<br>다름이아니라, F학점 기준에 대해 알고싶습니다.<br>감사합니다.",
+			"postFile": "소프트웨어공학_강의계획서.pdf",
+			"comments": [
+			  {
+				"commentID": 1,
+				"commentUserID": "12000001",
+				"commentUserName": "이기훈",
+				"commentDate": "2025-03-05 14:00:32",
+				"commentContents": "해당부분 설명 공지 올려드릴께요."
+			  },
+			  {
+				"commentID": 1,
+				"commentUserID": "2020202077",
+				"commentUserName": "신성민",
+				"commentDate": "2025-03-05 14:30:13",
+				"commentContents": "교수님 감사합니다."
+			  }
+			]
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "notice": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Notice2"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "subject",
+		  "notice"
+		]
+	  },
+	  "과제목록(학생)114": {
+		"title": "과제목록(학생)114",
+		"example": {
+		  "subject": {
+			"ClassID": "20251I02043",
+			"ClassName": "소프트웨어공학",
+			"ClassProf": "이기훈",
+			"ClassCount": 2,
+			"ClassTime": [
+			  "1:4:1",
+			  "3:3:1"
+			],
+			"ClassLocation": [
+			  "새빛관 203호",
+			  "새빛관 203호"
+			],
+			"writeEnable": 0
+		  },
+		  "assignment": [
+			{
+			  "postID": 2,
+			  "postName": "2차 과제",
+			  "postDate": "2025-05-07 23:59:00"
+			},
+			{
+			  "postID": 1,
+			  "postName": "1차 과제",
+			  "postDate": "2025-03-20 23:59:00"
+			}
+		  ]
+		},
+		"type": "object",
+		"properties": {
+		  "subject": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Subject11"
+			  },
+			  {}
+			]
+		  },
+		  "assignment": {
+			"type": "array",
+			"items": {
+			  "$ref": "#/definitions/Assignment1"
+			}
+		  }
+		},
+		"required": [
+		  "subject",
+		  "assignment"
+		]
+	  },
+	  "Assignment1": {
+		"title": "Assignment1",
+		"example": {
+		  "postID": 2,
+		  "postName": "2차 과제",
+		  "postDate": "2025-05-07 23:59:00"
+		},
+		"type": "object",
+		"properties": {
+		  "postID": {
+			"type": "integer",
+			"format": "int32"
+		  },
+		  "postName": {
+			"type": "string"
+		  },
+		  "postDate": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "postID",
+		  "postName",
+		  "postDate"
+		]
+	  },
+	  "계정관리115": {
+		"title": "계정관리115",
+		"example": {
+		  "accounts": {
+			"student": {
+			  "userID": "202312345",
+			  "userName": "신성민",
+			  "userType": "student",
+			  "email": "cydiazero@kw.ac.kr",
+			  "status": "active",
+			  "lastLogin": "2025-05-20T09:12:45"
+			},
+			"professor": {
+			  "userID": "12003012",
+			  "userName": "이형근",
+			  "userType": "professor",
+			  "email": "leehk@kw.ac.kr",
+			  "status": "active",
+			  "lastLogin": "2025-05-20T08:03:22"
+			},
+			"admin": {
+			  "userID": "admin",
+			  "userName": "관리자",
+			  "userType": "admin",
+			  "email": "admin@kw.ac.kr",
+			  "status": "active",
+			  "lastLogin": "2025-05-19T23:58:17"
+			}
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "accounts": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Accounts"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "accounts"
+		]
+	  },
+	  "Accounts": {
+		"title": "Accounts",
+		"example": {
+		  "student": {
+			"userID": "202312345",
+			"userName": "신성민",
+			"userType": "student",
+			"email": "cydiazero@kw.ac.kr",
+			"status": "active",
+			"lastLogin": "2025-05-20T09:12:45"
+		  },
+		  "professor": {
+			"userID": "12003012",
+			"userName": "이형근",
+			"userType": "professor",
+			"email": "leehk@kw.ac.kr",
+			"status": "active",
+			"lastLogin": "2025-05-20T08:03:22"
+		  },
+		  "admin": {
+			"userID": "admin",
+			"userName": "관리자",
+			"userType": "admin",
+			"email": "admin@kw.ac.kr",
+			"status": "active",
+			"lastLogin": "2025-05-19T23:58:17"
+		  }
+		},
+		"type": "object",
+		"properties": {
+		  "student": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Student"
+			  },
+			  {}
+			]
+		  },
+		  "professor": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Professor"
+			  },
+			  {}
+			]
+		  },
+		  "admin": {
+			"type": "object",
+			"allOf": [
+			  {
+				"$ref": "#/definitions/Admin"
+			  },
+			  {}
+			]
+		  }
+		},
+		"required": [
+		  "student",
+		  "professor",
+		  "admin"
+		]
+	  },
+	  "Student": {
+		"title": "Student",
+		"example": {
+		  "userID": "202312345",
+		  "userName": "신성민",
+		  "userType": "student",
+		  "email": "cydiazero@kw.ac.kr",
+		  "status": "active",
+		  "lastLogin": "2025-05-20T09:12:45"
+		},
+		"type": "object",
+		"properties": {
+		  "userID": {
+			"type": "string"
+		  },
+		  "userName": {
+			"type": "string"
+		  },
+		  "userType": {
+			"type": "string"
+		  },
+		  "email": {
+			"type": "string"
+		  },
+		  "status": {
+			"type": "string"
+		  },
+		  "lastLogin": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "userID",
+		  "userName",
+		  "userType",
+		  "email",
+		  "status",
+		  "lastLogin"
+		]
+	  },
+	  "Professor": {
+		"title": "Professor",
+		"example": {
+		  "userID": "12003012",
+		  "userName": "이형근",
+		  "userType": "professor",
+		  "email": "leehk@kw.ac.kr",
+		  "status": "active",
+		  "lastLogin": "2025-05-20T08:03:22"
+		},
+		"type": "object",
+		"properties": {
+		  "userID": {
+			"type": "string"
+		  },
+		  "userName": {
+			"type": "string"
+		  },
+		  "userType": {
+			"type": "string"
+		  },
+		  "email": {
+			"type": "string"
+		  },
+		  "status": {
+			"type": "string"
+		  },
+		  "lastLogin": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "userID",
+		  "userName",
+		  "userType",
+		  "email",
+		  "status",
+		  "lastLogin"
+		]
+	  },
+	  "Admin": {
+		"title": "Admin",
+		"example": {
+		  "userID": "admin",
+		  "userName": "관리자",
+		  "userType": "admin",
+		  "email": "admin@kw.ac.kr",
+		  "status": "active",
+		  "lastLogin": "2025-05-19T23:58:17"
+		},
+		"type": "object",
+		"properties": {
+		  "userID": {
+			"type": "string"
+		  },
+		  "userName": {
+			"type": "string"
+		  },
+		  "userType": {
+			"type": "string"
+		  },
+		  "email": {
+			"type": "string"
+		  },
+		  "status": {
+			"type": "string"
+		  },
+		  "lastLogin": {
+			"type": "string"
+		  }
+		},
+		"required": [
+		  "userID",
+		  "userName",
+		  "userType",
+		  "email",
+		  "status",
+		  "lastLogin"
+		]
+	  }
+	},
+	"tags": [
+	  {
+		"name": "로그인 관련",
+		"description": "로그인이 처리되는 API\n\nURL은 login을 사용."
+	  },
+	  {
+		"name": "메인 페이지",
+		"description": "이 항목은 \b메인 페이지에서 접근하는 항목들에 대해 설명한다."
+	  },
+	  {
+		"name": "강의 공지",
+		"description": "특정 강의의 공지사항 게시판에 대한 내용이다."
+	  },
+	  {
+		"name": "수강생 게시판",
+		"description": "특정 강의의 수강생 게시판에 대한 내용이다."
+	  },
+	  {
+		"name": "과제",
+		"description": "특정 강의의 과제 게시판에 대한 내용이다."
+	  },
+	  {
+		"name": "관리자",
+		"description": "관리자가 접속하였을 때 출력하는 정보이다."
+	  }
+	]
+  }
