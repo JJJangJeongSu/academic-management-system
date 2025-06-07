@@ -365,3 +365,93 @@ export const calculateGPA = (grades: Grade[]): number => {
   
   return Number((totalPoints / totalCredits).toFixed(2));
 };
+
+// 로그인/인증 관련 타입 정의
+export type UserRole = 'student' | 'professor' | 'admin';
+
+export interface User {
+  id: string;
+  username: string;
+  password: string;
+  name: string;
+  role: UserRole;
+}
+
+export interface Token {
+  token: string;
+  userId: string;
+  expiresAt: string; // ISO8601
+}
+
+// Mock users (사용자 데이터)
+export const users: User[] = [
+  {
+    id: 'student1',
+    username: 'student1',
+    password: 'password123',
+    name: '홍길동',
+    role: 'student',
+  },
+  {
+    id: 'prof1',
+    username: 'prof1',
+    password: 'password123',
+    name: '이교수',
+    role: 'professor',
+  },
+  {
+    id: 'admin1',
+    username: 'admin1',
+    password: 'adminpass',
+    name: '관리자',
+    role: 'admin',
+  },
+];
+
+// Mock tokens (토큰 데이터)
+export const tokens: Token[] = [
+  {
+    token: 'token-student1',
+    userId: 'student1',
+    expiresAt: '2025-12-31T23:59:59Z',
+  },
+  {
+    token: 'token-prof1',
+    userId: 'prof1',
+    expiresAt: '2025-12-31T23:59:59Z',
+  },
+  {
+    token: 'token-admin1',
+    userId: 'admin1',
+    expiresAt: '2025-12-31T23:59:59Z',
+  },
+];
+
+// 로그인 API (POST /login) - KLAS 명세에 맞게 반환 타입 구현
+export function login(uid: string, pw: string): { token: string } | { message: string } {
+  const user = users.find(u => u.username === uid && u.password === pw);
+  if (!user) {
+    return { message: 'Account is not exist.' };
+  }
+  // 이미 발급된 토큰이 있으면 반환, 없으면 새로 발급
+  let token = tokens.find(t => t.userId === user.id);
+  if (!token) {
+    token = {
+      token: `token-${user.id}`,
+      userId: user.id,
+      expiresAt: '2025-12-31T23:59:59Z',
+    };
+    tokens.push(token);
+  }
+  return { token: token.token };
+}
+
+// 간단한 login 함수 테스트
+function testLogin() {
+  console.log('정상 로그인:', login('student1', 'password123'));
+  console.log('비밀번호 오류:', login('student1', 'wrongpw'));
+  console.log('존재하지 않는 유저:', login('notexist', 'password123'));
+}
+
+// 테스트 실행 (개발용)
+testLogin();
