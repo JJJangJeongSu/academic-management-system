@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-
-// 명세 기반 타입 정의
-interface Subject {
-  ClassID: number;
-  ClassName: string;
-  ClassProf: string;
-  ClassTime: string[];
-  ClassLocation: string[];
-}
+import { Subject } from '../types/subject';
 
 interface CoursesApiResponse {
   subject: {
