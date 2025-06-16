@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
 // Dashboard 반환형 타입 정의 (명세 기반)
 interface Subject {
@@ -111,14 +112,14 @@ const Dashboard: React.FC = () => {
         <h2 className="text-xl font-semibold mb-4">수강 과목</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.subject.subjects.map(subj => (
-            <div key={subj.ClassID} className="card p-4 border rounded-lg shadow-sm">
+            <Link key={subj.ClassID} to={`/courses/${subj.ClassID}`} className="card p-4 border rounded-lg shadow-sm hover:shadow-md transition">
               <div className="font-bold text-lg">{subj.ClassName}</div>
               <div className="text-sm text-secondary-700">교수: {subj.ClassProf}</div>
               <div className="text-xs text-secondary-500 mt-1">
                 강의실: {subj.ClassLocation.join(', ')}<br />
                 강의시간: {subj.ClassTime.join(', ')}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Subject } from '../types/subject';
+import { Link } from 'react-router-dom';
 
 interface CoursesApiResponse {
   subject: {
@@ -73,7 +74,9 @@ const Courses: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.subject.subjects.map(subject => (
           <div key={subject.ClassID} className="card p-4 border rounded-lg shadow-sm bg-white">
-            <div className="font-bold text-lg mb-1">{subject.ClassName}</div>
+            <Link to={`/courses/${subject.ClassID}`} className="font-bold text-lg mb-1 hover:underline">
+              {subject.ClassName}
+            </Link>
             <div className="text-sm text-secondary-700 mb-1">교수: {subject.ClassProf}</div>
             <div className="text-xs text-secondary-500 mb-1">강의시간: {subject.ClassTime.join(', ')}</div>
             <div className="text-xs text-secondary-500">강의실: {subject.ClassLocation.join(', ')}</div>

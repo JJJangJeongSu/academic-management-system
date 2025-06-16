@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Subject } from '../types/subject';
+import { Link } from 'react-router-dom';
 
 // 명세 기반 mock data
 const mockTimetableData: { subject: { count: number; subjects: Subject[] } } = {
@@ -112,7 +113,9 @@ const Timetable: React.FC = () => {
         <div className="space-y-4">
           {subjects.map(subj => (
             <div key={subj.ClassID} className="card p-4">
-              <h3 className="font-semibold text-secondary-800">{subj.ClassName}</h3>
+              <Link to={`/courses/${subj.ClassID}`} className="font-semibold text-secondary-800 hover:underline">
+                {subj.ClassName}
+              </Link>
               <div className="mt-2 space-y-1 text-sm text-secondary-600">
                 <div>교수: {subj.ClassProf}</div>
                 <div>강의실: {subj.ClassLocation.join(', ')}</div>
