@@ -1,84 +1,48 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { login as mockLogin, users } from '../data/mockData';
-
-export type UserRole = 'student' | 'professor' | 'admin';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  profileImage?: string;
-}
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { login as apiLogin } from '../api/auth';
+import { User } from '../types/auth';
 
 interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  register: (email: string, password: string, name: string, role: UserRole) => Promise<void>;
   isAuthenticated: boolean;
+  user: User | null;
+  login: (userid: string, passwd: string) => Promise<void>;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const login = async (email: string, password: string): Promise<void> => {
-    const result = mockLogin(email, password);
-    if ('token' in result) {
-      localStorage.setItem('token', result.token);
-      const userData = users.find(u => u.username === email);
-      if (userData) {
-        setUser({
-          id: userData.id,
-          name: userData.name,
-          email: userData.username,
-          role: userData.role,
-        });
-        return;
-      }
-    }
-    if ('message' in result && typeof result.message === 'string') {
-      alert(result.message);
-    } else {
-      alert('로그인 실패');
-    }
-    setUser(null);
-  };
+  const login = useCallback(async (userid: string, passwd: string) => {
+    const response = await apiLogin({ userid, passwd });
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+  }, []);
 
-  const logout = (): void => {
+  const logout = useCallback(() => {
+    setToken(null);
     setUser(null);
     localStorage.removeItem('token');
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }, []);
+
+  const value = {
+    isAuthenticated: !!token,
+    user,
+    login,
+    logout,
   };
 
-  const register = async (
-    email: string,
-    password: string,
-    name: string,
-    role: UserRole
-  ): Promise<void> => {
-    setUser({
-      id: Math.random().toString(36).substring(2, 9),
-      name,
-      email,
-      role,
-    });
-  };
-
-  const isAuthenticated = user !== null;
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout, register, isAuthenticated }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
