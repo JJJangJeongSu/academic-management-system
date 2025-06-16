@@ -17,6 +17,7 @@ const Login: React.FC = () => {
 
     try {
       await login(userid, passwd);
+      console.log('login success');
       navigate('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
