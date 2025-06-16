@@ -5,51 +5,70 @@ import { useAuth } from '../contexts/AuthContext';
 const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [userid, setUserid] = useState('');
+  const [passwd, setPasswd] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(username, password);
-    navigate('/dashboard');
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await login(userid, passwd);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '로그인에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-extrabold text-center mb-8">로그인</h2>
-        <form className="space-y-6" onSubmit={handleLogin}>
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">아이디</label>
-            <input
-              id="username"
-              type="text"
-              placeholder="아이디를 입력하세요"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              autoComplete="username"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="비밀번호를 입력하세요"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-              autoComplete="current-password"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 text-lg font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-          >
-            로그인
-          </button>
-        </form>
-      </div>
+    <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+      <h2 className="text-3xl font-extrabold text-center mb-8">로그인</h2>
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+      <form className="space-y-6" onSubmit={handleLogin}>
+        <div>
+          <label htmlFor="userid" className="block text-sm font-medium text-gray-700 mb-1">아이디</label>
+          <input
+            id="userid"
+            type="text"
+            placeholder="아이디를 입력하세요"
+            value={userid}
+            onChange={e => setUserid(e.target.value)}
+            className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            autoComplete="username"
+            disabled={isLoading}
+          />
+        </div>
+        <div>
+          <label htmlFor="passwd" className="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
+          <input
+            id="passwd"
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            value={passwd}
+            onChange={e => setPasswd(e.target.value)}
+            className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            autoComplete="current-password"
+            disabled={isLoading}
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-3 text-lg font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:bg-blue-400"
+          disabled={isLoading}
+        >
+          {isLoading ? '로그인 중...' : '로그인'}
+        </button>
+      </form>
+    </div>
   );
 };
 
