@@ -4,10 +4,11 @@ export interface LoginRequest {
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   userid: string;
-  role: 'student' | 'professor';
+  role: 'student' | 'professor' | 'admin';
+  profileImage?: string;
 }
 
 export interface LoginResponse {

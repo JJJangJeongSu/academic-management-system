@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   GraduationCap, 
   LayoutDashboard, 
@@ -20,6 +20,25 @@ const MainLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path === '/dashboard') return 'Dashboard';
+    if (path === '/courses') return 'My Courses';
+    if (path === '/assignments') return 'Assignments';
+    if (path === '/grades') return 'Grades';
+    if (path === '/timetable') return 'Timetable';
+    if (path === '/manage-students') return 'Manage Students';
+    if (path === '/manage-courses') return 'Manage Courses';
+    if (path.includes('/courses/')) {
+      if (path.includes('/notices/')) return 'Notice';
+      if (path.includes('/materials/')) return 'Course Material';
+      if (path.includes('/assignments/')) return 'Assignment';
+      return 'Course Details';
+    }
+    return '';
+  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -60,7 +79,7 @@ const MainLayout: React.FC = () => {
           
           {/* Page title - visible on larger screens */}
           <div className="hidden md:block">
-            <h1 className="text-lg font-medium text-secondary-700">Dashboard</h1>
+            <h1 className="text-lg font-medium text-secondary-700">{getPageTitle()}</h1>
           </div>
           
           {/* User profile and notifications */}
