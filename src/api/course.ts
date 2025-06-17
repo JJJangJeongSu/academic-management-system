@@ -266,35 +266,29 @@ export const getAssignmentDetail = async (classId: string, postId: string): Prom
 };
 
 export const getCourseMaterials = async (classId: string): Promise<CourseMaterials> => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('인증되지 않은 사용자입니다.');
-    }
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
 
-    const response = await fetch(`${API_BASE_URL}/classCourse?classID=${classId}`, {
-      method: 'GET',
+  const response = await fetch(
+    `${API_BASE_URL}/classCourse?classID=${classId}`,
+    {
       headers: {
-        'authorization': `${token}`,
+        'Authorization': `${token}`,
         'Content-Type': 'application/json',
       },
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
-      }
-      throw new Error('강의 자료를 불러오는데 실패했습니다.');
     }
+  );
 
-    const data: CourseMaterials = await response.json();
-    return data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
     }
-    throw new Error('알 수 없는 오류가 발생했습니다.');
+    throw new Error('Failed to fetch course materials');
   }
+
+  return response.json();
 };
 
 export const getCourseMaterialDetail = async (classId: string, postId: string): Promise<CourseMaterialDetail> => {
@@ -303,6 +297,8 @@ export const getCourseMaterialDetail = async (classId: string, postId: string): 
     if (!token) {
       throw new Error('인증되지 않은 사용자입니다.');
     }
+
+    console.log(classId, postId);
 
     const response = await fetch(`${API_BASE_URL}/classCourse/course?classID=${classId}&postID=${postId}`, {
       method: 'GET',
