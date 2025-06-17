@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { Mail, Plus, Calendar, Download, User } from 'lucide-react';
+import { Plus, Calendar, Download, User } from 'lucide-react';
 import NoticeItem from '../components/NoticeItem';
 import { useAuth } from '../contexts/AuthContext';
 import { getCourseDetail, getCourseAssignments, getCourseMaterials } from '../api/course';
@@ -104,11 +104,6 @@ const CourseDetail: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          <button className="btn btn-primary mt-4 md:mt-0 flex items-center self-start">
-            <Mail size={18} className="mr-1.5" />
-            교수님께 메일
-          </button>
         </div>
       </div>
       
