@@ -8,7 +8,7 @@ import type { CourseDetail, CourseMaterial, CourseMaterials } from '../types/cou
 import type { CourseAssignments } from '../types/assignment';
 import { format } from 'date-fns';
 
-type TabType = 'notices' | 'materials' | 'assignments' | 'q-and-a';
+type TabType = 'notices' | 'materials' | 'assignments';
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -146,17 +146,6 @@ const CourseDetail: React.FC = () => {
             }`}
           >
             과제
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('q-and-a')}
-            className={`py-4 px-1 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'q-and-a'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300'
-            }`}
-          >
-            Q&A
           </button>
         </nav>
       </div>
@@ -312,13 +301,6 @@ const CourseDetail: React.FC = () => {
                 <p className="text-secondary-600">등록된 강의 자료가 없습니다.</p>
               </div>
             )}
-          </div>
-        )}
-        
-        {/* Q&A tab */}
-        {activeTab === 'q-and-a' && (
-          <div className="bg-gray-50 rounded-lg p-8 text-center">
-            <p className="text-secondary-600">준비 중인 기능입니다.</p>
           </div>
         )}
       </div>
