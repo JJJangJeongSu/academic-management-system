@@ -2,12 +2,16 @@ export interface Assignment {
   postID: number;
   postName: string;
   postDate: string;
-  submit: 0 | 1;
+  submit: number;
 }
 
-export interface Subject {
+export interface SubjectWithAssignments {
   ClassID: number;
   ClassName: string;
   ClassProf: string;
   Assignment: Assignment[];
+}
+
+export interface AssignmentsResponse {
+  subjects: SubjectWithAssignments[];
 } 
