@@ -1,17 +1,13 @@
 export interface GradeSubject {
-  ClassID: number;
-  ClassName: string;
-  ClassProf: string;
-  ClassSemester: number;
-  ClassGrade: string;
-  ClassCredit: number;
-  ClassScore: number;
+  id: number;
+  uid: number;
+  SubjID: number;
+  SubjName: string;
+  Score: number;
+  Grade: string;
+  Unit: number;
 }
 
-export interface GradesApiResponse {
-  GPA: number;
-  subject: {
-    count: number;
-    subjects: GradeSubject[];
-  };
+export interface GradesResponse {
+  subject: GradeSubject[];
 } 
