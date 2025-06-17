@@ -1,6 +1,18 @@
 import { LoginRequest, LoginResponse } from '../types/auth';
+import { API_BASE_URL } from '../config';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+interface SignupRequest {
+  userid: string;
+  name: string;
+  email: string;
+  passwd: string;
+  type: 1 | 2; // 1: 학생, 2: 교수
+  status: 'active' | 'inactive';
+}
+
+interface SignupResponse {
+  message: string;
+}
 
 export const login = async (request: LoginRequest): Promise<LoginResponse> => {
   try {
@@ -32,4 +44,20 @@ export const login = async (request: LoginRequest): Promise<LoginResponse> => {
     }
     throw new Error('알 수 없는 오류가 발생했습니다.');
   }
+};
+
+export const signup = async (data: SignupRequest): Promise<SignupResponse> => {
+  const response = await fetch(`${API_BASE_URL}/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('회원가입에 실패했습니다.');
+  }
+
+  return response.json();
 }; 

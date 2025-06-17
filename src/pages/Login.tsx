@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userid, setUserid] = useState('');
   const [passwd, setPasswd] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 회원가입 성공 메시지 표시
+  const message = location.state?.message;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +33,11 @@ const Login: React.FC = () => {
   return (
     <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
       <h2 className="text-3xl font-extrabold text-center mb-8">로그인</h2>
+      {message && (
+        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+          {message}
+        </div>
+      )}
       {error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
@@ -68,6 +77,13 @@ const Login: React.FC = () => {
         >
           {isLoading ? '로그인 중...' : '로그인'}
         </button>
+
+        <div className="text-center mt-4">
+          <span className="text-gray-600">계정이 없으신가요? </span>
+          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+            회원가입
+          </Link>
+        </div>
       </form>
     </div>
   );
