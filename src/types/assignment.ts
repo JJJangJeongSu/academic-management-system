@@ -1,28 +1,33 @@
 export interface Assignment {
   postID: number;
-  postUserName: string;
   postName: string;
+  postUserID: string;
+  postUserName: string;
   postDate: string;
+  postContents: string;
+  postFile?: string;
+  comments: AssignmentComment[];
 }
 
 export interface AssignmentComment {
   commentID: number;
   commentName: string;
+  commentUserID: string;
   commentUserName: string;
   commentDate: string;
   commentContents: string;
-  commentFile: string | null;
+  commentFile?: string;
 }
 
 export interface AssignmentDetail {
-  postID: number;
-  postName: string;
-  postUserID: number;
-  postUserName: string;
-  postDate: string;
-  postContents: string;
-  postFile: string | null;
-  comments: AssignmentComment[];
+  subject: {
+    ClassID: number;
+    ClassName: string;
+    ClassProf: string;
+    ClassTime: string;
+    ClassRoom: string;
+  };
+  assignment: Assignment;
 }
 
 export interface CourseAssignments {
