@@ -5,6 +5,7 @@ import { GradesResponse } from '../types/grade';
 import { NoticeDetail } from '../types/notice';
 import { CourseAssignments } from '../types/assignment';
 import { AssignmentDetailResponse } from '../types/assignment';
+import { CourseMaterialDetail } from '../types/course';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -14,6 +15,7 @@ export const getCourseDetail = async (classId: string): Promise<CourseDetail> =>
     if (!token) {
       throw new Error('인증되지 않은 사용자입니다.');
     }
+
     const response = await fetch(`${API_BASE_URL}/classNotice?classID=${classId}`, {
       method: 'GET',
       headers: {
@@ -295,14 +297,14 @@ export const getCourseMaterials = async (classId: string): Promise<CourseMateria
   }
 };
 
-export const getCourseMaterialDetail = async (classId: string, postId: string): Promise<CourseMaterialDetailResponse> => {
+export const getCourseMaterialDetail = async (classId: string, postId: string): Promise<CourseMaterialDetail> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
       throw new Error('인증되지 않은 사용자입니다.');
     }
 
-    const response = await fetch(`${API_BASE_URL}/classCourse?classID=${classId}&postID=${postId}`, {
+    const response = await fetch(`${API_BASE_URL}/classCourse/course?classID=${classId}&postID=${postId}`, {
       method: 'GET',
       headers: {
         'authorization': `${token}`,
@@ -314,10 +316,10 @@ export const getCourseMaterialDetail = async (classId: string, postId: string): 
       if (response.status === 401) {
         throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
       }
-      throw new Error('강의 자료를 불러오는데 실패했습니다.');
+      throw new Error('강의자료를 불러오는데 실패했습니다.');
     }
 
-    const data: CourseMaterialDetailResponse = await response.json();
+    const data: CourseMaterialDetail = await response.json();
     return data;
   } catch (error) {
     if (error instanceof Error) {

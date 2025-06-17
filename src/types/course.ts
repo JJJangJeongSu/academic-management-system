@@ -24,7 +24,17 @@ export interface CourseMaterialComment {
   commentFile: string | null;
 }
 
-export interface CourseMaterialDetail {
+export interface CourseComment {
+  commentID: number;
+  commentName: string;
+  commentUserID: number;
+  commentUserName: string;
+  commentDate: string;
+  commentContents: string;
+  commentFile: string | null;
+}
+
+export interface CourseMaterial {
   postID: number;
   postName: string;
   postUserID: number;
@@ -32,7 +42,19 @@ export interface CourseMaterialDetail {
   postDate: string;
   postContents: string;
   postFile: string | null;
-  comments: CourseMaterialComment[];
+  comments: CourseComment[];
+}
+
+export interface CourseMaterialDetail {
+  subject: {
+    ClassID: number;
+    ClassName: string;
+    ClassProf: string;
+    ClassTime: string[];
+    ClassLocation: string[];
+    writeEnable: number;
+  };
+  course: CourseMaterial;
 }
 
 export interface CourseDetail {
