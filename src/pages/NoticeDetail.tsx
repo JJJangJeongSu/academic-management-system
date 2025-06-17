@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, MessageSquare } from 'lucide-react';
-import { getNoticeDetail } from '../api/course';
+import { ArrowLeft, Download, MessageSquare, Plus, X } from 'lucide-react';
+import { getNoticeDetail, addNoticeComment } from '../api/course';
 import type { NoticeDetail } from '../types/notice';
 import { format } from 'date-fns';
 
@@ -10,6 +10,9 @@ const NoticeDetail: React.FC = () => {
   const [data, setData] = useState<NoticeDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCommentForm, setShowCommentForm] = useState(false);
+  const [commentString, setCommentString] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +40,26 @@ const NoticeDetail: React.FC = () => {
 
     fetchNoticeDetail();
   }, [courseId, noticeId]);
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!courseId || !noticeId) return;
+
+    setSubmitting(true);
+    try {
+      await addNoticeComment(courseId, noticeId, '', commentString, undefined);
+      // Refresh notice detail to show new comment
+      const response = await getNoticeDetail(courseId, noticeId);
+      setData(response);
+      // Reset form
+      setCommentString('');
+      setShowCommentForm(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '댓글 작성에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -118,10 +141,77 @@ const NoticeDetail: React.FC = () => {
 
       {/* Comments section */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold flex items-center">
-          <MessageSquare size={20} className="mr-2" />
-          댓글 {data.notice.comments.length}개
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold flex items-center">
+            <MessageSquare size={20} className="mr-2" />
+            댓글 {data.notice.comments.length}개
+          </h2>
+          <button
+            onClick={() => setShowCommentForm(!showCommentForm)}
+            className="btn btn-primary flex items-center"
+          >
+            {showCommentForm ? (
+              <>
+                <X size={16} className="mr-1" />
+                취소
+              </>
+            ) : (
+              <>
+                <Plus size={16} className="mr-1" />
+                댓글 작성
+              </>
+            )}
+          </button>
+        </div>
+
+        {showCommentForm && (
+          <form onSubmit={handleSubmitComment} className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 space-y-4">
+            <div className="flex items-center justify-between border-b pb-4">
+              <h3 className="text-lg font-semibold text-secondary-900">댓글 작성</h3>
+              <button
+                type="button"
+                onClick={() => setShowCommentForm(false)}
+                className="text-secondary-500 hover:text-secondary-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div>
+              <textarea
+                value={commentString}
+                onChange={(e) => setCommentString(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[120px] resize-y"
+                placeholder="댓글을 입력하세요"
+                required
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4 border-t">
+              <button
+                type="button"
+                onClick={() => setShowCommentForm(false)}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-secondary-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? (
+                  <span className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    작성 중...
+                  </span>
+                ) : (
+                  '댓글 작성'
+                )}
+              </button>
+            </div>
+          </form>
+        )}
 
         {data.notice.comments.length > 0 ? (
           <div className="space-y-4">

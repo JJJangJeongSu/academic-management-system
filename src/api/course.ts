@@ -327,4 +327,44 @@ export const getCourseMaterialDetail = async (classId: string, postId: string): 
     }
     throw new Error('알 수 없는 오류가 발생했습니다.');
   }
+};
+
+export const addNoticeComment = async (
+  classId: string,
+  postId: string,
+  commentName: string,
+  commentString: string,
+  appendix?: File
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const formData = new FormData();
+  formData.append('CommentName', commentName);
+  formData.append('CommentString', commentString);
+  if (appendix) {
+    formData.append('Appendix', appendix);
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/addComment?classID=${classId}&postID=${postId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to add comment');
+  }
+
+  return response.json();
 }; 
