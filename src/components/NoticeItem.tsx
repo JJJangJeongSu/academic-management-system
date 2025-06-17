@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { Notice } from '../data/mockData';
+
+interface Notice {
+  id: string;
+  title: string;
+  writer: string;
+  date: string;
+  content: string;
+  courseId: string;
+}
 
 interface NoticeItemProps {
   notice: Notice;
@@ -18,7 +26,9 @@ const NoticeItem: React.FC<NoticeItemProps> = ({ notice }) => {
       <div className="flex justify-between items-start cursor-pointer" onClick={toggleExpanded}>
         <div>
           <h3 className="font-medium text-secondary-800">{notice.title}</h3>
-          <div className="text-xs text-secondary-500 mt-1">{notice.postedAgo}</div>
+          <div className="text-xs text-secondary-500 mt-1">
+            {notice.writer} • {notice.date}
+          </div>
         </div>
         <button className="p-1 text-secondary-400 hover:text-secondary-600">
           {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Mail, Plus } from 'lucide-react';
-import AssignmentCard from '../components/AssignmentCard';
 import NoticeItem from '../components/NoticeItem';
-import MaterialItem from '../components/MaterialItem';
-import { courses, assignments, notices, materials } from '../data/mockData';
 import { useAuth } from '../contexts/AuthContext';
+import { getCourseDetail } from '../api/course';
+import type { CourseDetail } from '../types/course';
 
 type TabType = 'notices' | 'materials' | 'assignments' | 'q-and-a';
 
@@ -17,36 +16,40 @@ const CourseDetail: React.FC = () => {
     (tabParam as TabType) || 'notices'
   );
   const { user } = useAuth();
-  
-  // Find course by ID
-  const course = courses.find(c => c.id === courseId);
-  
-  // Get course-specific content
-  const courseAssignments = assignments.filter(a => a.courseId === courseId);
-  const courseNotices = notices.filter(n => n.courseId === courseId);
-  const courseMaterials = materials.filter(m => m.courseId === courseId);
-  
-  // Check if user is professor for this course
-  const isProfessor = user?.role === 'professor';
-  
+  const [courseData, setCourseData] = useState<CourseDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      if (!courseId) return;
+      
+      try {
+        const data = await getCourseDetail(courseId);
+        console.log(data);
+        setCourseData(data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '강의 정보를 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, [courseId]);
+
   // Update URL when tab changes
   useEffect(() => {
     setSearchParams({ tab: activeTab });
   }, [activeTab, setSearchParams]);
 
-  if (!course) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-secondary-800">Course not found</h2>
-          <p className="text-secondary-600 mt-2">The course you are looking for does not exist.</p>
-          <Link to="/courses" className="btn btn-primary mt-4 inline-block">
-            Back to Courses
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div>로딩중...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+  if (!courseData) return <div>강의 정보가 없습니다.</div>;
+
+  const isProfessor = user?.role === 'professor';
+  const canWrite = courseData.subject.writeEnable === 1;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -54,17 +57,23 @@ const CourseDetail: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{course.code}: {course.title}</h1>
+            <h1 className="text-2xl font-bold">{courseData.subject.ClassName}</h1>
             <div className="text-secondary-600 mt-2">
-              <div>Professor: {course.professor}</div>
-              <div>Schedule: {course.schedule}</div>
-              <div>Room: {course.room}</div>
+              <div>교수: {courseData.subject.ClassProf}</div>
+              <div>강의시간: {Array.isArray(courseData.subject.ClassTime) 
+                ? courseData.subject.ClassTime.join(', ')
+                : courseData.subject.ClassTime}
+              </div>
+              <div>강의실: {Array.isArray(courseData.subject.ClassLocation)
+                ? courseData.subject.ClassLocation.join(', ')
+                : courseData.subject.ClassLocation}
+              </div>
             </div>
           </div>
           
           <button className="btn btn-primary mt-4 md:mt-0 flex items-center self-start">
             <Mail size={18} className="mr-1.5" />
-            Contact Professor
+            교수님께 메일
           </button>
         </div>
       </div>
@@ -80,7 +89,7 @@ const CourseDetail: React.FC = () => {
                 : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300'
             }`}
           >
-            Notices
+            공지사항
           </button>
           
           <button
@@ -91,7 +100,7 @@ const CourseDetail: React.FC = () => {
                 : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300'
             }`}
           >
-            Materials
+            강의자료
           </button>
           
           <button
@@ -102,7 +111,7 @@ const CourseDetail: React.FC = () => {
                 : 'border-transparent text-secondary-500 hover:text-secondary-700 hover:border-secondary-300'
             }`}
           >
-            Assignments
+            과제
           </button>
           
           <button
@@ -124,104 +133,44 @@ const CourseDetail: React.FC = () => {
         {activeTab === 'notices' && (
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Notices</h2>
+              <h2 className="text-xl font-semibold">공지사항</h2>
               
-              {isProfessor && (
+              {(isProfessor || canWrite) && (
                 <button className="btn btn-primary btn-sm flex items-center">
                   <Plus size={16} className="mr-1" />
-                  Post Notice
+                  공지 작성
                 </button>
               )}
             </div>
             
-            {courseNotices.length > 0 ? (
+            {courseData.notice.length > 0 ? (
               <div className="space-y-4">
-                {courseNotices.map(notice => (
-                  <NoticeItem key={notice.id} notice={notice} />
+                {courseData.notice.map(notice => (
+                  <NoticeItem
+                    key={notice.postID}
+                    notice={{
+                      id: notice.postID.toString(),
+                      title: notice.postName,
+                      writer: notice.postUserName,
+                      date: notice.postDate,
+                      content: '',
+                      courseId: courseId || '',
+                    }}
+                  />
                 ))}
               </div>
             ) : (
               <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <p className="text-secondary-600">No notices have been posted yet.</p>
+                <p className="text-secondary-600">등록된 공지사항이 없습니다.</p>
               </div>
             )}
           </div>
         )}
         
-        {/* Materials tab */}
-        {activeTab === 'materials' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Course Resources</h2>
-              
-              {isProfessor && (
-                <button className="btn btn-primary btn-sm flex items-center">
-                  <Plus size={16} className="mr-1" />
-                  Upload Material
-                </button>
-              )}
-            </div>
-            
-            {courseMaterials.length > 0 ? (
-              <div className="space-y-3">
-                {courseMaterials.map(material => (
-                  <MaterialItem key={material.id} material={material} />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <p className="text-secondary-600">No materials have been uploaded yet.</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Assignments tab */}
-        {activeTab === 'assignments' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Assignments</h2>
-              
-              {isProfessor && (
-                <button className="btn btn-primary btn-sm flex items-center">
-                  <Plus size={16} className="mr-1" />
-                  Create Assignment
-                </button>
-              )}
-            </div>
-            
-            {courseAssignments.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {courseAssignments.map(assignment => (
-                  <AssignmentCard key={assignment.id} assignment={assignment} detailed />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <p className="text-secondary-600">No assignments have been posted yet.</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Q&A tab */}
-        {activeTab === 'q-and-a' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Questions & Answers</h2>
-              
-              <button className="btn btn-primary btn-sm flex items-center">
-                <Plus size={16} className="mr-1" />
-                Ask a Question
-              </button>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-8 text-center">
-              <p className="text-secondary-600">No questions have been asked yet.</p>
-              <button className="btn btn-primary mt-4">
-                Be the first to ask
-              </button>
-            </div>
+        {/* Other tabs - to be implemented with their respective APIs */}
+        {activeTab !== 'notices' && (
+          <div className="bg-gray-50 rounded-lg p-8 text-center">
+            <p className="text-secondary-600">준비 중인 기능입니다.</p>
           </div>
         )}
       </div>
