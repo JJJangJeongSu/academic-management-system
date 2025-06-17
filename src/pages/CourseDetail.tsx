@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { Mail, Plus, Calendar, Download } from 'lucide-react';
+import { Mail, Plus, Calendar, Download, User } from 'lucide-react';
 import NoticeItem from '../components/NoticeItem';
 import { useAuth } from '../contexts/AuthContext';
-import { getCourseDetail, getCourseAssignments } from '../api/course';
-import type { CourseDetail } from '../types/course';
+import { getCourseDetail, getCourseAssignments, getCourseMaterials } from '../api/course';
+import type { CourseDetail, CourseMaterial, CourseMaterials } from '../types/course';
 import type { CourseAssignments } from '../types/assignment';
 import { format } from 'date-fns';
 
@@ -20,6 +20,7 @@ const CourseDetail: React.FC = () => {
   const { user } = useAuth();
   const [courseData, setCourseData] = useState<CourseDetail | null>(null);
   const [assignmentsData, setAssignmentsData] = useState<CourseAssignments | null>(null);
+  const [materialsData, setMaterialsData] = useState<CourseMaterials | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -57,14 +58,25 @@ const CourseDetail: React.FC = () => {
     fetchAssignments();
   }, [courseId, activeTab]);
 
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      if (!courseId || activeTab !== 'materials') return;
+      
+      try {
+        const data = await getCourseMaterials(courseId);
+        setMaterialsData(data);
+      } catch (err) {
+        console.error('Error fetching materials:', err);
+      }
+    };
+
+    fetchMaterials();
+  }, [courseId, activeTab]);
+
   // Update URL when tab changes
   useEffect(() => {
     setSearchParams({ tab: activeTab });
   }, [activeTab, setSearchParams]);
-
-  const handleAssignmentClick = (assignmentId: number) => {
-    navigate(`/courses/${courseId}/assignments/${assignmentId}`);
-  };
 
   if (loading) return <div>로딩중...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -209,7 +221,7 @@ const CourseDetail: React.FC = () => {
                   <div 
                     key={assignment.postID} 
                     className="card p-6 cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => handleAssignmentClick(assignment.postID)}
+                    onClick={() => navigate(`/courses/${courseId}/assignments/${assignment.postID}`)}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-semibold">{assignment.postName}</h3>
@@ -244,8 +256,67 @@ const CourseDetail: React.FC = () => {
           </div>
         )}
         
-        {/* Other tabs - to be implemented with their respective APIs */}
-        {activeTab !== 'notices' && activeTab !== 'assignments' && (
+        {/* Materials tab */}
+        {activeTab === 'materials' && (
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">강의 자료</h2>
+              
+              {(isProfessor || canWrite) && (
+                <button className="btn btn-primary btn-sm flex items-center">
+                  <Plus size={16} className="mr-1" />
+                  자료 등록
+                </button>
+              )}
+            </div>
+            
+            {materialsData && materialsData.course && materialsData.course.length > 0 ? (
+              <div className="grid gap-4">
+                {materialsData.course.map((material: CourseMaterial) => (
+                  <div
+                    key={material.postID}
+                    onClick={() => navigate(`/courses/${courseId}/materials/${material.postID}`)}
+                    className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-medium">{material.postName}</h3>
+                        <div className="flex items-center space-x-4 mt-2 text-sm text-secondary-600">
+                          <div className="flex items-center">
+                            <User size={14} className="mr-1" />
+                            <span>{material.postUserName}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <Calendar size={14} className="mr-1" />
+                            <span>{format(new Date(material.postDate), 'yyyy년 MM월 dd일')}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {material.postFile && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // TODO: Implement file download
+                          }}
+                          className="btn btn-ghost btn-sm"
+                        >
+                          <Download size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-gray-50 rounded-lg p-8 text-center">
+                <p className="text-secondary-600">등록된 강의 자료가 없습니다.</p>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Q&A tab */}
+        {activeTab === 'q-and-a' && (
           <div className="bg-gray-50 rounded-lg p-8 text-center">
             <p className="text-secondary-600">준비 중인 기능입니다.</p>
           </div>
