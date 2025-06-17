@@ -14,6 +14,7 @@ import ManageStudents from './pages/ManageStudents';
 import ManageCourses from './pages/ManageCourses';
 import NotFound from './pages/NotFound';
 import NoticeDetail from './pages/NoticeDetail';
+import CourseMaterialDetail from './pages/CourseMaterialDetail';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -42,6 +43,7 @@ const App: React.FC = () => {
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:courseId" element={<CourseDetail />} />
           <Route path="/courses/:courseId/notices/:noticeId" element={<NoticeDetail />} />
+          <Route path="/courses/:courseId/materials/:materialId" element={<CourseMaterialDetail />} />
           <Route path="/assignments" element={<Assignments />} />
           <Route path="/grades" element={<Grades />} />
           <Route path="/timetable" element={<Timetable />} />
