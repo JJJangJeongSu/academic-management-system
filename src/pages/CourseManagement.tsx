@@ -1,49 +1,31 @@
 import React, { useState, useEffect } from 'react';
-
-interface Course {
-  id: number;
-  name: string;
-  professor: string;
-  location: string[];
-  time: string[];
-  capacity: number;
-  enrolled: number;
-}
+import { Edit, Trash2, Plus } from 'lucide-react';
+import { getAllCourses, Course } from '../api/courses';
 
 const CourseManagement: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
 
   useEffect(() => {
-    // TODO: Implement actual API call to fetch courses
     const fetchCourses = async () => {
       try {
-        // Placeholder data
-        const mockCourses: Course[] = [
-          {
-            id: 1,
-            name: '웹 프로그래밍',
-            professor: '김교수',
-            location: ['A101'],
-            time: ['월 1-2교시'],
-            capacity: 30,
-            enrolled: 25
-          },
-          {
-            id: 2,
-            name: '데이터베이스',
-            professor: '이교수',
-            location: ['B203'],
-            time: ['화 3-4교시'],
-            capacity: 35,
-            enrolled: 30
-          }
-        ];
-        setCourses(mockCourses);
+        console.log('Fetching courses...');
+        const response = await getAllCourses();
+        console.log('API Response:', response);
+        if (response && response.subjects) {
+          setCourses(response.subjects);
+          console.log('Courses set:', response.subjects);
+        } else {
+          console.error('Invalid response format:', response);
+          setError('수업 정보 형식이 올바르지 않습니다.');
+        }
         setError(null);
-      } catch (err) {
-        setError('수업 정보를 불러오는데 실패했습니다.');
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        setError(error instanceof Error ? error.message : '수업 정보를 불러오는데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -52,17 +34,34 @@ const CourseManagement: React.FC = () => {
     fetchCourses();
   }, []);
 
+  const handleEditCourse = (course: Course) => {
+    setEditingCourse(course);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteCourse = (courseId: string) => {
+    if (confirm('정말로 이 수업을 삭제하시겠습니까?')) {
+      setCourses(courses.filter(course => course.ClassID !== courseId));
+    }
+  };
+
   if (loading) return <div>로딩중...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-bold text-secondary-900 mb-6">수업 관리</h1>
-        
-        <div className="mb-4">
-          <button className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 transition-colors">
-            새 수업 추가
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-secondary-900">수업 관리</h1>
+          <button 
+            className="btn btn-primary flex items-center gap-2"
+            onClick={() => {
+              setEditingCourse(null);
+              setIsModalOpen(true);
+            }}
+          >
+            <Plus size={20} />
+            수업 추가
           </button>
         </div>
 
@@ -70,27 +69,47 @@ const CourseManagement: React.FC = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">수업 ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">수업명</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">교수</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">강의실</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">강의시간</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">수강인원</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">강의실</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {courses.map((course) => (
-                <tr key={course.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{course.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{course.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{course.professor}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{course.location.join(', ')}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{course.time.join(', ')}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{course.enrolled}/{course.capacity}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="text-primary-600 hover:text-primary-900 mr-2">수정</button>
-                    <button className="text-red-600 hover:text-red-900">삭제</button>
+                <tr key={course.ClassID}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {course.ClassID}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {course.ClassName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {course.ClassProf}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {course.ClassTime.join(', ')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {course.ClassLocation.join(', ')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button 
+                      className="text-primary-600 hover:text-primary-900 inline-flex items-center gap-1 mr-4"
+                      onClick={() => handleEditCourse(course)}
+                    >
+                      <Edit size={16} />
+                      수정
+                    </button>
+                    <button 
+                      className="text-red-600 hover:text-red-900 inline-flex items-center gap-1"
+                      onClick={() => handleDeleteCourse(course.ClassID)}
+                    >
+                      <Trash2 size={16} />
+                      삭제
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -98,6 +117,77 @@ const CourseManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Course Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+            <h2 className="text-xl font-semibold mb-4">
+              {editingCourse ? '수업 수정' : '새 수업 추가'}
+            </h2>
+            
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  수업명
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={editingCourse?.ClassName}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  교수
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={editingCourse?.ClassProf}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  강의시간
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={editingCourse?.ClassTime.join(', ')}
+                  placeholder="예: 월1, 수2"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  강의실
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={editingCourse?.ClassLocation.join(', ')}
+                />
+              </div>
+              
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  취소
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {editingCourse ? '저장' : '추가'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
