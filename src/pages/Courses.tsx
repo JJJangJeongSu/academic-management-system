@@ -7,7 +7,7 @@ import { getCourseList } from '../api/course';
 
 const Courses: React.FC = () => {
   const { user } = useAuth();
-  const isAdmin = user?.role === 'professor';
+  const isAdmin = Number(localStorage.getItem('uid')) === 0;
   const isProfessor = user?.role === 'professor';
   const [data, setData] = useState<CoursesApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +28,17 @@ const Courses: React.FC = () => {
 
     fetchCourses();
   }, []);
+
+  if (isAdmin) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center p-8 bg-white rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-xl font-semibold text-secondary-900 mb-2">지원되지 않는 기능</h2>
+          <p className="text-secondary-600">관리자님께서는 이 기능을 사용하실 수 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div>로딩중...</div>;
   if (error) return <div className="text-red-500">{error}</div>;

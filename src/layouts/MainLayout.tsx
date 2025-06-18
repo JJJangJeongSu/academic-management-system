@@ -55,7 +55,7 @@ const MainLayout: React.FC = () => {
   };
 
   const isProfessor = user?.role === 'professor';
-  const isAdmin = Number(localStorage.getItem('uid')) === 0;
+  const isAdmin = user?.uid === 0;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">

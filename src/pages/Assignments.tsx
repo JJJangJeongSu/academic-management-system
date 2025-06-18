@@ -10,6 +10,7 @@ const Assignments: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const userRole = localStorage.getItem('userRole');
+  const isAdmin = Number(localStorage.getItem('uid')) === 0;
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -26,6 +27,17 @@ const Assignments: React.FC = () => {
 
     fetchAssignments();
   }, []);
+
+  if (isAdmin) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center p-8 bg-white rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-xl font-semibold text-secondary-900 mb-2">지원되지 않는 기능</h2>
+          <p className="text-secondary-600">관리자님께서는 이 기능을 사용하실 수 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (userRole === '2') {
     return (
