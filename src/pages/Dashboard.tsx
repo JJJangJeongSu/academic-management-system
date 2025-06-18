@@ -38,11 +38,13 @@ const Dashboard: React.FC = () => {
     <div className="space-y-8 animate-fade-in">
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
         <h1 className="text-2xl font-bold text-secondary-900">
-          환영합니다{user ? `, ${user.name}님!` : ''}
+          {localStorage.getItem('userRole') === '2' ? '환영합니다, 교수님!' : `환영합니다${user ? `, ${user.name}님!` : ''}`}
         </h1>
-        <p className="text-secondary-600 mt-1">
-          이번 학기 수강 과목: <b>{data.subject.count}</b>개, GPA: <b>{data.GPA}</b>, 예정된 과제: <b>{data.assignment}</b>개
-        </p>
+        {localStorage.getItem('userRole') !== '2' && (
+          <p className="text-secondary-600 mt-1">
+            이번 학기 수강 과목: <b>{data.subject.count}</b>개, GPA: <b>{data.GPA}</b>, 예정된 과제: <b>{data.assignment}</b>개
+          </p>
+        )}
       </div>
 
       {/* 수강 과목 목록 */}

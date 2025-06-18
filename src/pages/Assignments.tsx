@@ -9,6 +9,7 @@ const Assignments: React.FC = () => {
   const [data, setData] = useState<AssignmentsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const userRole = localStorage.getItem('userRole');
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -25,6 +26,17 @@ const Assignments: React.FC = () => {
 
     fetchAssignments();
   }, []);
+
+  if (userRole === '2') {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center p-8 bg-white rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-xl font-semibold text-secondary-900 mb-2">지원되지 않는 기능</h2>
+          <p className="text-secondary-600">교수님께서는 이 기능을 사용하실 수 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div>로딩중...</div>;
   if (error) return <div className="text-red-500">{error}</div>;

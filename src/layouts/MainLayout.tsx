@@ -9,7 +9,6 @@ import {
   Calendar, 
   Menu, 
   X, 
-  Bell,
   Users,
   LogOut,
   BookOpen
@@ -82,30 +81,8 @@ const MainLayout: React.FC = () => {
             <h1 className="text-lg font-medium text-secondary-700">{getPageTitle()}</h1>
           </div>
           
-          {/* User profile and notifications */}
-          <div className="flex items-center gap-4">
-            <button 
-              className="p-2 rounded-full text-secondary-500 hover:bg-gray-100"
-              aria-label="Notifications"
-            >
-              <Bell size={20} />
-            </button>
-            
-            <div className="flex items-center gap-2">
-              <span className="hidden md:block text-sm font-medium">{user?.name}</span>
-              {user?.profileImage ? (
-                <img 
-                  src={user.profileImage} 
-                  alt={user.name} 
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="h-8 w-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-sm">
-                  {user?.name?.charAt(0) || 'U'}
-                </div>
-              )}
-            </div>
-
+          {/* Logout button */}
+          <div className="flex items-center">
             <button
               onClick={handleLogout}
               className="p-2 rounded-full text-secondary-500 hover:bg-gray-100"
