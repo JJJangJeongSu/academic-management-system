@@ -20,6 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(response.token);
     setUser(response.user);
 
+
     console.log(response.token);
     localStorage.setItem('token', response.token);
     localStorage.setItem('user', JSON.stringify(response.user));
@@ -30,6 +31,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('uid');
   }, []);
 
   const value = {

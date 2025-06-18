@@ -9,10 +9,10 @@ import {
   Calendar, 
   Menu, 
   X, 
-  Bell,
   Users,
   LogOut,
-  BookOpen
+  BookOpen,
+  UserCog
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -26,11 +26,13 @@ const MainLayout: React.FC = () => {
     const path = location.pathname;
     if (path === '/dashboard') return 'Dashboard';
     if (path === '/courses') return 'My Courses';
+    if (path === '/course-registration') return 'Course Registration';
     if (path === '/assignments') return 'Assignments';
     if (path === '/grades') return 'Grades';
     if (path === '/timetable') return 'Timetable';
     if (path === '/manage-students') return 'Manage Students';
-    if (path === '/manage-courses') return 'Manage Courses';
+    if (path === '/course-management') return 'Course Management';
+    if (path === '/account-management') return 'Account Management';
     if (path.includes('/courses/')) {
       if (path.includes('/notices/')) return 'Notice';
       if (path.includes('/materials/')) return 'Course Material';
@@ -54,7 +56,7 @@ const MainLayout: React.FC = () => {
   };
 
   const isProfessor = user?.role === 'professor';
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.uid === 0;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -82,30 +84,8 @@ const MainLayout: React.FC = () => {
             <h1 className="text-lg font-medium text-secondary-700">{getPageTitle()}</h1>
           </div>
           
-          {/* User profile and notifications */}
-          <div className="flex items-center gap-4">
-            <button 
-              className="p-2 rounded-full text-secondary-500 hover:bg-gray-100"
-              aria-label="Notifications"
-            >
-              <Bell size={20} />
-            </button>
-            
-            <div className="flex items-center gap-2">
-              <span className="hidden md:block text-sm font-medium">{user?.name}</span>
-              {user?.profileImage ? (
-                <img 
-                  src={user.profileImage} 
-                  alt={user.name} 
-                  className="h-8 w-8 rounded-full object-cover"
-                />
-              ) : (
-                <div className="h-8 w-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-semibold text-sm">
-                  {user?.name?.charAt(0) || 'U'}
-                </div>
-              )}
-            </div>
-
+          {/* Logout button */}
+          <div className="flex items-center">
             <button
               onClick={handleLogout}
               className="p-2 rounded-full text-secondary-500 hover:bg-gray-100"
@@ -140,89 +120,128 @@ const MainLayout: React.FC = () => {
           </div>
           
           {/* Navigation links */}
-          <nav className="p-4 space-y-1">
-            <NavLink 
-              to="/dashboard"
-              className={({ isActive }) => 
-                `sidebar-link ${isActive ? 'active' : ''}`
-              }
-              onClick={closeSidebar}
-            >
-              <LayoutDashboard size={20} />
-              <span>Dashboard</span>
-            </NavLink>
-            
-            <NavLink 
-              to="/courses"
-              className={({ isActive }) => 
-                `sidebar-link ${isActive ? 'active' : ''}`
-              }
-              onClick={closeSidebar}
-            >
-              <Book size={20} />
-              <span>My Courses</span>
-            </NavLink>
-            
-            {!isProfessor && (
-              <NavLink 
-                to="/assignments"
-                className={({ isActive }) => 
-                  `sidebar-link ${isActive ? 'active' : ''}`
-                }
-                onClick={closeSidebar}
-              >
-                <ClipboardList size={20} />
-                <span>Assignments</span>
-              </NavLink>
-            )}
-            
-            {!isProfessor && (
-              <NavLink 
-                to="/grades"
-                className={({ isActive }) => 
-                  `sidebar-link ${isActive ? 'active' : ''}`
-                }
-                onClick={closeSidebar}
-              >
-                <BarChart2 size={20} />
-                <span>Grades</span>
-              </NavLink>
-            )}
-            
-            <NavLink 
-              to="/timetable"
-              className={({ isActive }) => 
-                `sidebar-link ${isActive ? 'active' : ''}`
-              }
-              onClick={closeSidebar}
-            >
-              <Calendar size={20} />
-              <span>Timetable</span>
-            </NavLink>
-
-            {(isProfessor || isAdmin) && (
+          <nav className="p-4 space-y-2">
+            {isAdmin ? (
               <>
                 <NavLink 
-                  to="/manage-students"
+                  to="/dashboard"
                   className={({ isActive }) => 
                     `sidebar-link ${isActive ? 'active' : ''}`
                   }
                   onClick={closeSidebar}
                 >
-                  <Users size={20} />
-                  <span>Manage Students</span>
+                  <LayoutDashboard size={20} />
+                  <span>Dashboard</span>
+                </NavLink>
+                
+                <NavLink 
+                  to="/account-management"
+                  className={({ isActive }) => 
+                    `sidebar-link ${isActive ? 'active' : ''}`
+                  }
+                  onClick={closeSidebar}
+                >
+                  <UserCog size={20} />
+                  <span>계정 관리</span>
                 </NavLink>
 
                 <NavLink 
-                  to="/manage-courses"
+                  to="/course-management"
                   className={({ isActive }) => 
                     `sidebar-link ${isActive ? 'active' : ''}`
                   }
                   onClick={closeSidebar}
                 >
                   <BookOpen size={20} />
-                  <span>Manage Courses</span>
+                  <span>수업 관리</span>
                 </NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink 
+                  to="/dashboard"
+                  className={({ isActive }) => 
+                    `sidebar-link ${isActive ? 'active' : ''}`
+                  }
+                  onClick={closeSidebar}
+                >
+                  <LayoutDashboard size={20} />
+                  <span>Dashboard</span>
+                </NavLink>
+                
+                <NavLink 
+                  to="/courses"
+                  className={({ isActive }) => 
+                    `sidebar-link ${isActive ? 'active' : ''}`
+                  }
+                  onClick={closeSidebar}
+                >
+                  <Book size={20} />
+                  <span>My Courses</span>
+                </NavLink>
+                
+                {!isProfessor && (
+                  <NavLink 
+                    to="/assignments"
+                    className={({ isActive }) => 
+                      `sidebar-link ${isActive ? 'active' : ''}`
+                    }
+                    onClick={closeSidebar}
+                  >
+                    <ClipboardList size={20} />
+                    <span>Assignments</span>
+                  </NavLink>
+                )}
+                
+                {!isProfessor && (
+                  <NavLink 
+                    to="/grades"
+                    className={({ isActive }) => 
+                      `sidebar-link ${isActive ? 'active' : ''}`
+                    }
+                    onClick={closeSidebar}
+                  >
+                    <BarChart2 size={20} />
+                    <span>Grades</span>
+                  </NavLink>
+                )}
+                
+                <NavLink 
+                  to="/timetable"
+                  className={({ isActive }) => 
+                    `sidebar-link ${isActive ? 'active' : ''}`
+                  }
+                  onClick={closeSidebar}
+                >
+                  <Calendar size={20} />
+                  <span>Timetable</span>
+                </NavLink>
+
+                {isProfessor && (
+                  <>
+                    <NavLink 
+                      to="/manage-students"
+                      className={({ isActive }) => 
+                        `sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      onClick={closeSidebar}
+                    >
+                      <Users size={20} />
+                      <span>Manage Students</span>
+                    </NavLink>
+
+                    <NavLink 
+                      to="/course-management"
+                      className={({ isActive }) => 
+                        `sidebar-link ${isActive ? 'active' : ''}`
+                      }
+                      onClick={closeSidebar}
+                    >
+                      <BookOpen size={20} />
+                      <span>Manage Courses</span>
+                    </NavLink>
+                  </>
+                )}
               </>
             )}
           </nav>

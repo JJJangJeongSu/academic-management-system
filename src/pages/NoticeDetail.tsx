@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, MessageSquare, Plus, X } from 'lucide-react';
-import { getNoticeDetail, addNoticeComment } from '../api/course';
+import { ArrowLeft, Download, MessageSquare, Plus, X, Trash2 } from 'lucide-react';
+import { getNoticeDetail, addNoticeComment, deleteNoticeComment } from '../api/course';
 import type { NoticeDetail } from '../types/notice';
 import { format } from 'date-fns';
 
@@ -58,6 +58,22 @@ const NoticeDetail: React.FC = () => {
       setError(err instanceof Error ? err.message : '댓글 작성에 실패했습니다.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!courseId || !noticeId) return;
+
+    console.log("삭제 시도 - commentId: ", commentId);
+    
+    try {
+      await deleteNoticeComment(Number(commentId));
+      // 댓글 삭제 후 공지사항 상세 정보 다시 불러오기
+      const response = await getNoticeDetail(courseId, noticeId);
+      setData(response);
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      setError('댓글 삭제에 실패했습니다.');
     }
   };
 
@@ -219,8 +235,19 @@ const NoticeDetail: React.FC = () => {
               <div key={comment.commentID} className="card p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-medium">{comment.commentUserName}</div>
-                  <div className="text-sm text-secondary-600">
-                    {format(new Date(comment.commentDate), 'yyyy년 MM월 dd일 HH:mm')}
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm text-secondary-600">
+                      {format(new Date(comment.commentDate), 'yyyy년 MM월 dd일 HH:mm')}
+                    </div>
+                    {localStorage.getItem('uid') === comment.commentUserID.toString() && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.commentID)}
+                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                        title="댓글 삭제"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="text-secondary-800 mb-2">{comment.commentContents}</div>

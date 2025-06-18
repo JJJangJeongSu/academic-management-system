@@ -9,6 +9,7 @@ export interface User {
   userid: string;
   role: 'student' | 'professor' | 'admin';
   profileImage?: string;
+  uid?: number;
 }
 
 export interface LoginResponse {

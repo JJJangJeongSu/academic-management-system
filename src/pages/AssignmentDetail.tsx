@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Upload, Plus, X } from 'lucide-react';
-import { getAssignmentDetail, submitAssignment } from '../api/course';
+import { ArrowLeft, Download, Upload, Plus, X, Trash2 } from 'lucide-react';
+import { getAssignmentDetail, submitAssignment, deleteAssignmentComment } from '../api/course';
 import type { AssignmentDetail } from '../types/assignment';
 import { format } from 'date-fns';
 import { useAuth } from '../contexts/AuthContext';
@@ -60,6 +60,20 @@ const AssignmentDetail: React.FC = () => {
       setError(err instanceof Error ? err.message : '과제 제출에 실패했습니다.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    if (!courseId || !assignmentId) return;
+
+    try {
+      await deleteAssignmentComment(Number(commentId));
+      // 과제 제출 삭제 후 과제 상세 정보 다시 불러오기
+      const response = await getAssignmentDetail(courseId, assignmentId);
+      setData(response);
+    } catch (error) {
+      console.error('Failed to delete submission:', error);
+      setError('과제 제출 삭제에 실패했습니다.');
     }
   };
 
@@ -145,7 +159,7 @@ const AssignmentDetail: React.FC = () => {
       </div>
 
       {/* Submissions section */}
-      {!isMyAssignment && (
+      {!isProfessor && !isMyAssignment && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold flex items-center">
@@ -265,12 +279,23 @@ const AssignmentDetail: React.FC = () => {
 
           {data.assignment.comments.length > 0 ? (
             <div className="space-y-4">
-              {data.assignment.comments.map(comment => (
+              {data.assignment.comments
+                .filter(comment => localStorage.getItem('uid') === comment.commentUserID.toString())
+                .map(comment => (
                 <div key={comment.commentID} className="card p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium">{comment.commentUserName}</div>
-                    <div className="text-sm text-secondary-600">
-                      {format(new Date(comment.commentDate), 'yyyy년 MM월 dd일 HH:mm')}
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm text-secondary-600">
+                        {format(new Date(comment.commentDate), 'yyyy년 MM월 dd일 HH:mm')}
+                      </div>
+                      <button
+                        onClick={() => handleDeleteComment(comment.commentID)}
+                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                        title="과제 제출 삭제"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                   <div className="text-secondary-800 mb-2">{comment.commentContents}</div>

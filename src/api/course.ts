@@ -192,6 +192,10 @@ export const getNoticeDetail = async (classId: string, postId: string): Promise<
     }
 
     const data: NoticeDetail = await response.json();
+    data.notice.comments.forEach((comment) => {
+      console.log("comment: ", comment);
+      console.log("commentID: ", comment.commentID);
+    });
     return data;
   } catch (error) {
     if (error instanceof Error) {
@@ -440,6 +444,369 @@ export const submitAssignment = async (
       throw new Error('인증이 만료되었습니다.');
     }
     throw new Error('과제 제출에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const deleteNoticeComment = async (
+  commentId: number
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+  console.log("삭제 시도 - commentId: ", commentId);
+  const formData = new FormData();
+  formData.append('CommentID', commentId.toString());
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/deleteComment`,
+    {
+      method: 'POST', // 또는 GET이 아니라면 POST
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CommentID: commentId, // 숫자 그대로 OK
+      }),
+    }
+  );
+  
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    console.log("삭제 실패 - status: ", response.status);
+    throw new Error('Failed to delete comment');
+  }
+
+  return response.json();
+};
+
+export const deleteCourseMaterialComment = async (
+  commentId: number
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classCourse/deleteComment`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CommentID: commentId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('댓글 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const deleteAssignmentComment = async (
+  commentId: number
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classAssignment/deleteComment`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CommentID: commentId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('과제 제출 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const createNotice = async (
+  classId: string,
+  postName: string,
+  postString: string,
+  appendix?: File
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const formData = new FormData();
+  formData.append('PostName', postName);
+  formData.append('PostString', postString);
+  if (appendix) {
+    formData.append('Appendix', appendix);
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/addNotice?classID=${classId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to create notice');
+  }
+
+  return response.json();
+};
+
+export const deleteNotice = async (postId: number): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/deleteNotice`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        PostID: postId
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to delete notice');
+  }
+
+  return response.json();
+};
+
+export const createCourseMaterial = async (
+  classId: string,
+  postName: string,
+  postString: string,
+  appendix?: File
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const formData = new FormData();
+  formData.append('PostName', postName);
+  formData.append('PostString', postString);
+  if (appendix) {
+    formData.append('Appendix', appendix);
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classCourse/addCourse?classID=${classId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to create course material');
+  }
+
+  return response.json();
+};
+
+export const deleteCourseMaterial = async (postId: number): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classCourse/deleteCourse`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        PostID: postId
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('강의자료 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const deleteAssignment = async (postId: number): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classAssignment/deleteAssignment`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        PostID: postId
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('과제 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const createAssignment = async (
+  classId: string,
+  postName: string,
+  postString: string,
+  postDate: string,
+  appendix?: File
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const formData = new FormData();
+  formData.append('PostName', postName);
+  formData.append('PostString', postString);
+  formData.append('PostDate', postDate);
+  if (appendix) {
+    formData.append('Appendix', appendix);
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classAssignment/addAssignment?classID=${classId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('과제 등록에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export interface AvailableCourse {
+  ClassID: number;
+  ClassName: string;
+  ClassProf: string;
+  ClassTime: string[];
+  ClassLocation: string[];
+}
+
+export interface AvailableCoursesResponse {
+  subjects: AvailableCourse[];
+}
+
+export interface EnrollResponse {
+  message: string;
+}
+
+export const getAvailableCourses = async (): Promise<AvailableCourse[]> => {
+  const response = await fetch(`${API_BASE_URL}/enroll`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || '수강 가능한 과목 목록을 불러오는데 실패했습니다.');
+  }
+
+  const data: AvailableCoursesResponse = await response.json();
+  return data.subjects;
+};
+
+export const enrollCourse = async (classId: number): Promise<EnrollResponse> => {
+  console.log("enrollCourse classId: ", classId);
+  console.log("enrollCourse token: ", localStorage.getItem('token'));
+  const response = await fetch(`${API_BASE_URL}/enrollSubject`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ classID: classId }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || '수강 신청에 실패했습니다.');
   }
 
   return response.json();
