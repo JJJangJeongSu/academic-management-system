@@ -26,6 +26,7 @@ const MainLayout: React.FC = () => {
     const path = location.pathname;
     if (path === '/dashboard') return 'Dashboard';
     if (path === '/courses') return 'My Courses';
+    if (path === '/course-registration') return 'Course Registration';
     if (path === '/assignments') return 'Assignments';
     if (path === '/grades') return 'Grades';
     if (path === '/timetable') return 'Timetable';

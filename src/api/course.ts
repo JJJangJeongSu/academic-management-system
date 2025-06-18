@@ -756,4 +756,56 @@ export const createAssignment = async (
   }
 
   return response.json();
+};
+
+export interface AvailableCourse {
+  ClassID: number;
+  ClassName: string;
+  ClassProf: string;
+  ClassTime: string[];
+  ClassLocation: string[];
+}
+
+export interface AvailableCoursesResponse {
+  subjects: AvailableCourse[];
+}
+
+export interface EnrollResponse {
+  message: string;
+}
+
+export const getAvailableCourses = async (): Promise<AvailableCourse[]> => {
+  const response = await fetch(`${API_BASE_URL}/enroll`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || '수강 가능한 과목 목록을 불러오는데 실패했습니다.');
+  }
+
+  const data: AvailableCoursesResponse = await response.json();
+  return data.subjects;
+};
+
+export const enrollCourse = async (classId: number): Promise<EnrollResponse> => {
+  const response = await fetch(`${API_BASE_URL}/enroll/enrollSubject`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ ClassID: classId }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || '수강 신청에 실패했습니다.');
+  }
+
+  return response.json();
 }; 
