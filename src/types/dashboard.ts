@@ -18,11 +18,11 @@ export interface Activity {
 export interface DashboardData {
   uid: number;
   type: number;
-  subject: {
+  subject?: {
     count: number;
     subjects: Subject[];
   };
-  GPA: number;
-  assignment: number;
-  activity: Activity[];
+  GPA?: number;
+  assignment?: number;
+  activity?: Activity[];
 } 
