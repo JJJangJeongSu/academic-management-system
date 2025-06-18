@@ -279,7 +279,9 @@ const AssignmentDetail: React.FC = () => {
 
           {data.assignment.comments.length > 0 ? (
             <div className="space-y-4">
-              {data.assignment.comments.map(comment => (
+              {data.assignment.comments
+                .filter(comment => localStorage.getItem('uid') === comment.commentUserID.toString())
+                .map(comment => (
                 <div key={comment.commentID} className="card p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="font-medium">{comment.commentUserName}</div>
@@ -287,15 +289,13 @@ const AssignmentDetail: React.FC = () => {
                       <div className="text-sm text-secondary-600">
                         {format(new Date(comment.commentDate), 'yyyy년 MM월 dd일 HH:mm')}
                       </div>
-                      {localStorage.getItem('uid') === comment.commentUserID.toString() && (
-                        <button
-                          onClick={() => handleDeleteComment(comment.commentID)}
-                          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
-                          title="과제 제출 삭제"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
+                      <button
+                        onClick={() => handleDeleteComment(comment.commentID)}
+                        className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                        title="과제 제출 삭제"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                   <div className="text-secondary-800 mb-2">{comment.commentContents}</div>
