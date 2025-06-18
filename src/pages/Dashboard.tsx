@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
       {/* 수강 과목 목록 */}
       {data.subject && (
         <section>
-          <h2 className="text-xl font-semibold mb-4">수강 과목</h2>
+          <h2 className="text-xl font-semibold mb-4">{localStorage.getItem('userRole') === '2' ? '강의 과목' : '수강 과목'}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {data.subject.subjects.map(subj => (
               <Link 

@@ -793,13 +793,15 @@ export const getAvailableCourses = async (): Promise<AvailableCourse[]> => {
 };
 
 export const enrollCourse = async (classId: number): Promise<EnrollResponse> => {
-  const response = await fetch(`${API_BASE_URL}/enroll/enrollSubject`, {
+  console.log("enrollCourse classId: ", classId);
+  console.log("enrollCourse token: ", localStorage.getItem('token'));
+  const response = await fetch(`${API_BASE_URL}/enrollSubject`, {
     method: 'POST',
     headers: {
       'Authorization': `${localStorage.getItem('token')}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ ClassID: classId }),
+    body: JSON.stringify({ classID: classId }),
   });
 
   if (!response.ok) {

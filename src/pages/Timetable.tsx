@@ -17,6 +17,7 @@ const Timetable: React.FC = () => {
       try {
         const response = await getTimetable();
         setData(response);
+        console.log("timetable data: ", response.subject.subjects);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : '시간표를 불러오는데 실패했습니다.');

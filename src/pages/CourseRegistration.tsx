@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { enrollCourse, getAvailableCourses, AvailableCourse } from '../api/course';
+import AlertPopup from '../components/AlertPopup';
 
 const CourseRegistration: React.FC = () => {
   const isAdmin = Number(localStorage.getItem('uid')) === 0;
@@ -38,11 +39,23 @@ const CourseRegistration: React.FC = () => {
       const updatedCourses = await getAvailableCourses();
       setSubjects(updatedCourses || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '수강 신청에 실패했습니다.');
+      const errorMessage = err instanceof Error ? err.message : '수강 신청에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Enrollment error:', errorMessage);
     } finally {
       setEnrollingClassId(null);
     }
   };
+
+  // Auto-hide success message after 3 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   if (isAdmin) {
     return (
@@ -68,21 +81,25 @@ const CourseRegistration: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Alert Popups */}
+      {error && (
+        <AlertPopup
+          type="error"
+          message={error}
+          onClose={() => setError(null)}
+        />
+      )}
+      {successMessage && (
+        <AlertPopup
+          type="success"
+          message={successMessage}
+          onClose={() => setSuccessMessage(null)}
+        />
+      )}
+
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">수강신청</h1>
       </div>
-
-      {/* Error and success messages */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-          {error}
-        </div>
-      )}
-      {successMessage && (
-        <div className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg">
-          {successMessage}
-        </div>
-      )}
 
       {/* Course list */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100">
