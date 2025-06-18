@@ -547,4 +547,112 @@ export const deleteAssignmentComment = async (
   }
 
   return response.json();
+};
+
+export const createNotice = async (
+  classId: string,
+  postName: string,
+  postString: string,
+  appendix?: File
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const formData = new FormData();
+  formData.append('PostName', postName);
+  formData.append('PostString', postString);
+  if (appendix) {
+    formData.append('Appendix', appendix);
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/addNotice?classID=${classId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to create notice');
+  }
+
+  return response.json();
+};
+
+export const deleteNotice = async (postId: number): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/deleteNotice`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        PostID: postId
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to delete notice');
+  }
+
+  return response.json();
+};
+
+export const createCourseMaterial = async (
+  classId: string,
+  postName: string,
+  postString: string,
+  appendix?: File
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+
+  const formData = new FormData();
+  formData.append('PostName', postName);
+  formData.append('PostString', postString);
+  if (appendix) {
+    formData.append('Appendix', appendix);
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classCourse/addCourse?classID=${classId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    throw new Error('Failed to create course material');
+  }
+
+  return response.json();
 }; 

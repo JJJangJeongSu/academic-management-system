@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Plus, Calendar, Download, User } from 'lucide-react';
 import NoticeItem from '../components/NoticeItem';
+import CreateNoticeForm from '../components/CreateNoticeForm';
+import CreateCourseMaterialForm from '../components/CreateCourseMaterialForm';
 import { useAuth } from '../contexts/AuthContext';
 import { getCourseDetail, getCourseAssignments, getCourseMaterials } from '../api/course';
 import type { CourseDetail, CourseMaterial, CourseMaterials } from '../types/course';
@@ -24,24 +26,27 @@ const CourseDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [showCreateNoticeForm, setShowCreateNoticeForm] = useState(false);
+  const [showCreateMaterialForm, setShowCreateMaterialForm] = useState(false);
+
+  const fetchCourseData = useCallback(async () => {
+    if (!courseId) return;
+    
+    setLoading(true);
+    try {
+      const data = await getCourseDetail(courseId);
+      setCourseData(data);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '강의 정보를 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  }, [courseId]);
 
   useEffect(() => {
-    const fetchCourseData = async () => {
-      if (!courseId) return;
-      
-      try {
-        const data = await getCourseDetail(courseId);
-        setCourseData(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : '강의 정보를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCourseData();
-  }, [courseId]);
+  }, [fetchCourseData]);
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -58,20 +63,20 @@ const CourseDetail: React.FC = () => {
     fetchAssignments();
   }, [courseId, activeTab]);
 
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      if (!courseId || activeTab !== 'materials') return;
-      
-      try {
-        const data = await getCourseMaterials(courseId);
-        setMaterialsData(data);
-      } catch (err) {
-        console.error('Error fetching materials:', err);
-      }
-    };
-
-    fetchMaterials();
+  const fetchMaterials = useCallback(async () => {
+    if (!courseId || activeTab !== 'materials') return;
+    
+    try {
+      const data = await getCourseMaterials(courseId);
+      setMaterialsData(data);
+    } catch (err) {
+      console.error('Error fetching materials:', err);
+    }
   }, [courseId, activeTab]);
+
+  useEffect(() => {
+    fetchMaterials();
+  }, [fetchMaterials]);
 
   // Update URL when tab changes
   useEffect(() => {
@@ -154,12 +159,26 @@ const CourseDetail: React.FC = () => {
               <h2 className="text-xl font-semibold">공지사항</h2>
               
               {(isProfessor || canWrite) && (
-                <button className="btn btn-primary btn-sm flex items-center">
+                <button 
+                  onClick={() => setShowCreateNoticeForm(true)}
+                  className="btn btn-primary btn-sm flex items-center"
+                >
                   <Plus size={16} className="mr-1" />
                   공지 작성
                 </button>
               )}
             </div>
+
+            {showCreateNoticeForm && (
+              <CreateNoticeForm
+                courseId={courseId || ''}
+                onSuccess={() => {
+                  setShowCreateNoticeForm(false);
+                  fetchCourseData();
+                }}
+                onCancel={() => setShowCreateNoticeForm(false)}
+              />
+            )}
             
             {courseData.notice.length > 0 ? (
               <div className="space-y-4">
@@ -174,6 +193,7 @@ const CourseDetail: React.FC = () => {
                       content: '',
                       courseId: courseId || '',
                     }}
+                    onDelete={fetchCourseData}
                   />
                 ))}
               </div>
@@ -247,53 +267,57 @@ const CourseDetail: React.FC = () => {
               <h2 className="text-xl font-semibold">강의 자료</h2>
               
               {(isProfessor || canWrite) && (
-                <button className="btn btn-primary btn-sm flex items-center">
+                <button 
+                  onClick={() => setShowCreateMaterialForm(true)}
+                  className="btn btn-primary btn-sm flex items-center"
+                >
                   <Plus size={16} className="mr-1" />
-                  자료 등록
+                  강의자료 작성
                 </button>
               )}
             </div>
-            
-            {materialsData && materialsData.course && materialsData.course.length > 0 ? (
-              <div className="grid gap-4">
-                {materialsData.course.map((material: CourseMaterial) => (
-                  <div
-                    key={material.postID}
-                    onClick={() => navigate(`/courses/${courseId}/materials/${material.postID}`)}
-                    className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow cursor-pointer"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-medium">{material.postName}</h3>
-                        <div className="flex items-center space-x-4 mt-2 text-sm text-secondary-600">
-                          <div className="flex items-center">
-                            <User size={14} className="mr-1" />
-                            <span>{material.postUserName}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <Calendar size={14} className="mr-1" />
-                            <span>{format(new Date(material.postDate), 'yyyy년 MM월 dd일')}</span>
-                          </div>
+
+            {showCreateMaterialForm && (
+              <CreateCourseMaterialForm
+                courseId={courseId || ''}
+                onSuccess={() => {
+                  setShowCreateMaterialForm(false);
+                  fetchMaterials();
+                }}
+                onCancel={() => setShowCreateMaterialForm(false)}
+              />
+            )}
+
+            {materialsData?.course.length > 0 ? (
+              <div className="space-y-4">
+                {materialsData.course.map(material => (
+                  <div key={material.postID} className="card p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h3 className="font-medium text-secondary-800">{material.postName}</h3>
+                        <div className="text-sm text-secondary-600 mt-1">
+                          {material.postUserName} • {format(new Date(material.postDate), 'yyyy년 MM월 dd일 HH:mm')}
                         </div>
                       </div>
                       {material.postFile && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // TODO: Implement file download
-                          }}
-                          className="btn btn-ghost btn-sm"
+                        <a
+                          href={`${import.meta.env.VITE_API_BASE_URL}/download/${material.postFile}`}
+                          className="flex items-center text-primary-600 hover:text-primary-700"
                         >
-                          <Download size={16} />
-                        </button>
+                          <Download size={16} className="mr-1" />
+                          첨부파일
+                        </a>
                       )}
+                    </div>
+                    <div className="text-secondary-600 text-sm line-clamp-2">
+                      {material.postContents}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <p className="text-secondary-600">등록된 강의 자료가 없습니다.</p>
+                <p className="text-secondary-600">등록된 강의자료가 없습니다.</p>
               </div>
             )}
           </div>
