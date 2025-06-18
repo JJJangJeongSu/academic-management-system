@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Subject, CoursesApiResponse } from '../types/subject';
+import { CoursesApiResponse } from '../types/subject';
 import { getTimetable } from '../api/course';
 import { Link } from 'react-router-dom';
 
@@ -17,7 +17,6 @@ const Timetable: React.FC = () => {
       try {
         const response = await getTimetable();
         setData(response);
-        console.log("timetable data: ", response.subject.subjects);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : '시간표를 불러오는데 실패했습니다.');
@@ -47,6 +46,13 @@ const Timetable: React.FC = () => {
   // Week View용: 요일별 시간표 데이터 생성
   const weekDays = ['월', '화', '수', '목', '금'];
   const timeSlots = Array.from({ length: 9 }, (_, i) => i + 1); // 1교시부터 9교시까지
+
+  // 시간표 데이터 파싱 함수
+  const parseTimeSlot = (timeStr: string) => {
+    const day = timeStr.charAt(0);
+    const period = parseInt(timeStr.substring(1));
+    return { day, period };
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -101,9 +107,11 @@ const Timetable: React.FC = () => {
                     {time}교시
                   </td>
                   {weekDays.map(day => {
-                    const subject = data.subject.subjects.find(
-                      subj =>
-                        subj.ClassTime.some(t => t.includes(day) && t.includes(`${time}교시`))
+                    const subject = data.subject.subjects.find(subj =>
+                      subj.ClassTime.some(timeStr => {
+                        const { day: subjectDay, period } = parseTimeSlot(timeStr);
+                        return subjectDay === day && period === time;
+                      })
                     );
                     return (
                       <td
@@ -116,7 +124,8 @@ const Timetable: React.FC = () => {
                             className="block p-2 bg-primary-50 rounded hover:bg-primary-100"
                           >
                             <div className="font-medium">{subject.ClassName}</div>
-                            <div className="text-xs text-gray-500">{subject.ClassLocation}</div>
+                            <div className="text-xs text-gray-500">{subject.ClassLocation.join(', ')}</div>
+                            <div className="text-xs text-gray-500">{subject.ClassProf}</div>
                           </Link>
                         ) : (
                           '-'
@@ -140,8 +149,9 @@ const Timetable: React.FC = () => {
                 <div>
                   <h3 className="text-lg font-semibold">{subject.ClassName}</h3>
                   <p className="text-sm text-gray-600 mt-1">
-                    {subject.ClassTime.join(', ')} | {subject.ClassLocation}
+                    {subject.ClassTime.join(', ')} | {subject.ClassLocation.join(', ')}
                   </p>
+                  <p className="text-sm text-gray-600">{subject.ClassProf}</p>
                 </div>
                 <Link
                   to={`/courses/${subject.ClassID}`}
