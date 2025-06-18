@@ -8,7 +8,7 @@ import { getCourseList } from '../api/course';
 const Courses: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = Number(localStorage.getItem('uid')) === 0;
-  const isProfessor = user?.role === 'professor';
+  const isProfessor = localStorage.getItem('userRole') === '2';
   const [data, setData] = useState<CoursesApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ const Courses: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">내 수강 과목 ({data.subject.count}개)</h1>
+        <h1 className="text-2xl font-bold">{localStorage.getItem('userRole') === '2' ? '강의 과목' : '내 수강 과목'} ({data.subject.count}개)</h1>
         <div className="flex gap-3">
           {/* Course registration button (visible only to students) */}
           {!isAdmin && !isProfessor && (
@@ -57,12 +57,7 @@ const Courses: React.FC = () => {
             </Link>
           )}
           {/* Add course button (visible only to admins and professors) */}
-          {(isAdmin || isProfessor) && (
-            <button className="btn btn-primary flex items-center">
-              <Plus size={18} className="mr-1.5" />
-              과목 추가
-            </button>
-          )}
+          
         </div>
       </div>
       {/* Courses grid */}
