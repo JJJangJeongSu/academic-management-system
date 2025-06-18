@@ -145,14 +145,14 @@ const MainLayout: React.FC = () => {
                 </NavLink>
 
                 <NavLink 
-                  to="/manage-courses"
+                  to="/course-management"
                   className={({ isActive }) => 
                     `sidebar-link ${isActive ? 'active' : ''}`
                   }
                   onClick={closeSidebar}
                 >
                   <BookOpen size={20} />
-                  <span>수업 목록 관리</span>
+                  <span>수업 관리</span>
                 </NavLink>
               </>
             ) : (

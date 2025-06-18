@@ -35,14 +35,30 @@ const Dashboard: React.FC = () => {
   if (error) return <div className="text-red-500">{error}</div>;
   if (!data) return <div>데이터가 없습니다.</div>;
 
-  // If user is admin (uid = 0), show only welcome message
+  // If user is admin (uid = 0), show admin dashboard
   if (Number(localStorage.getItem('uid')) === 0) {
     return (
       <div className="space-y-8 animate-fade-in">
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-          <h1 className="text-2xl font-bold text-secondary-900">
+          <h1 className="text-2xl font-bold text-secondary-900 mb-6">
             환영합니다 관리자님!
           </h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link 
+              to="/account-management"
+              className="p-4 border rounded-lg hover:shadow-md transition-shadow duration-200 bg-white"
+            >
+              <h2 className="text-xl font-semibold text-primary-600 mb-2">계정 관리</h2>
+              <p className="text-secondary-600">사용자 계정 조회 및 관리</p>
+            </Link>
+            <Link 
+              to="/course-management"
+              className="p-4 border rounded-lg hover:shadow-md transition-shadow duration-200 bg-white"
+            >
+              <h2 className="text-xl font-semibold text-primary-600 mb-2">수업 관리</h2>
+              <p className="text-secondary-600">수업 목록 조회 및 관리</p>
+            </Link>
+          </div>
         </div>
       </div>
     );

@@ -13,6 +13,7 @@ import Timetable from './pages/Timetable';
 import ManageStudents from './pages/ManageStudents';
 import ManageCourses from './pages/ManageCourses';
 import AccountManagement from './pages/AccountManagement';
+import CourseManagement from './pages/CourseManagement';
 import NotFound from './pages/NotFound';
 import NoticeDetail from './pages/NoticeDetail';
 import CourseMaterialDetail from './pages/CourseMaterialDetail';
@@ -53,6 +54,7 @@ const App: React.FC = () => {
           <Route path="/manage-students" element={<ManageStudents />} />
           <Route path="/manage-courses" element={<ManageCourses />} />
           <Route path="/account-management" element={<AccountManagement />} />
+          <Route path="/course-management" element={<CourseManagement />} />
         </Route>
 
         {/* Not found route */}
