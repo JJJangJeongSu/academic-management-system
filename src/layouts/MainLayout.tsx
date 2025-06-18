@@ -30,7 +30,7 @@ const MainLayout: React.FC = () => {
     if (path === '/grades') return 'Grades';
     if (path === '/timetable') return 'Timetable';
     if (path === '/manage-students') return 'Manage Students';
-    if (path === '/manage-courses') return 'Manage Courses';
+    if (path === '/course-management') return 'Course Management';
     if (path === '/account-management') return 'Account Management';
     if (path.includes('/courses/')) {
       if (path.includes('/notices/')) return 'Notice';
@@ -230,7 +230,7 @@ const MainLayout: React.FC = () => {
                     </NavLink>
 
                     <NavLink 
-                      to="/manage-courses"
+                      to="/course-management"
                       className={({ isActive }) => 
                         `sidebar-link ${isActive ? 'active' : ''}`
                       }

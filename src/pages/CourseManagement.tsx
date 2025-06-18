@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus } from 'lucide-react';
-import { getAllCourses, Course } from '../api/courses';
+import { getAllCourses, Course, createCourse, CreateCourseRequest } from '../api/courses';
 
 const CourseManagement: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -8,31 +8,37 @@ const CourseManagement: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [formData, setFormData] = useState<CreateCourseRequest>({
+    SubjName: '',
+    SubjTime: '',
+    SubjLocation: '',
+    ProfName: ''
+  });
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        console.log('Fetching courses...');
-        const response = await getAllCourses();
-        console.log('API Response:', response);
-        if (response && response.subjects) {
-          setCourses(response.subjects);
-          console.log('Courses set:', response.subjects);
-        } else {
-          console.error('Invalid response format:', response);
-          setError('수업 정보 형식이 올바르지 않습니다.');
-        }
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-        setError(error instanceof Error ? error.message : '수업 정보를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCourses();
   }, []);
+
+  const fetchCourses = async () => {
+    try {
+      console.log('Fetching courses...');
+      const response = await getAllCourses();
+      console.log('API Response:', response);
+      if (response && response.subjects) {
+        setCourses(response.subjects);
+        console.log('Courses set:', response.subjects);
+      } else {
+        console.error('Invalid response format:', response);
+        setError('수업 정보 형식이 올바르지 않습니다.');
+      }
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      setError(error instanceof Error ? error.message : '수업 정보를 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEditCourse = (course: Course) => {
     setEditingCourse(course);
@@ -42,6 +48,33 @@ const CourseManagement: React.FC = () => {
   const handleDeleteCourse = (courseId: string) => {
     if (confirm('정말로 이 수업을 삭제하시겠습니까?')) {
       setCourses(courses.filter(course => course.ClassID !== courseId));
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createCourse(formData);
+      setIsModalOpen(false);
+      setFormData({
+        SubjName: '',
+        SubjTime: '',
+        SubjLocation: '',
+        ProfName: ''
+      });
+      // Refresh the course list
+      await fetchCourses();
+    } catch (error) {
+      console.error('Error creating course:', error);
+      setError(error instanceof Error ? error.message : '수업 추가에 실패했습니다.');
     }
   };
 
@@ -57,6 +90,12 @@ const CourseManagement: React.FC = () => {
             className="btn btn-primary flex items-center gap-2"
             onClick={() => {
               setEditingCourse(null);
+              setFormData({
+                SubjName: '',
+                SubjTime: '',
+                SubjLocation: '',
+                ProfName: ''
+              });
               setIsModalOpen(true);
             }}
           >
@@ -126,15 +165,18 @@ const CourseManagement: React.FC = () => {
               {editingCourse ? '수업 수정' : '새 수업 추가'}
             </h2>
             
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   수업명
                 </label>
                 <input
                   type="text"
+                  name="SubjName"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  defaultValue={editingCourse?.ClassName}
+                  value={formData.SubjName}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
               
@@ -144,8 +186,11 @@ const CourseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
+                  name="ProfName"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  defaultValue={editingCourse?.ClassProf}
+                  value={formData.ProfName}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
               
@@ -155,9 +200,12 @@ const CourseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
+                  name="SubjTime"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  defaultValue={editingCourse?.ClassTime.join(', ')}
-                  placeholder="예: 월1, 수2"
+                  value={formData.SubjTime}
+                  onChange={handleInputChange}
+                  placeholder="예: 월3,수3"
+                  required
                 />
               </div>
               
@@ -167,8 +215,12 @@ const CourseManagement: React.FC = () => {
                 </label>
                 <input
                   type="text"
+                  name="SubjLocation"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  defaultValue={editingCourse?.ClassLocation.join(', ')}
+                  value={formData.SubjLocation}
+                  onChange={handleInputChange}
+                  placeholder="예: 새빛관203호, 새빛관204호"
+                  required
                 />
               </div>
               
