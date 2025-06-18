@@ -15,6 +15,10 @@ const Dashboard: React.FC = () => {
       try {
         const dashboardData = await getDashboardData();
         setData(dashboardData);
+        // Store user role in localStorage
+        localStorage.setItem('userRole', dashboardData.type.toString());
+        console.log("dashboardData: ", dashboardData);
+        console.log("userRole: ", localStorage.getItem('userRole'));
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.');
