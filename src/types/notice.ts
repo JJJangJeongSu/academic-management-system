@@ -5,6 +5,7 @@ export interface NoticeComment {
   commentDate: string;
   commentContents: string;
   commentFile: string | null;
+  commentUserID: number;
 }
 
 export interface NoticeDetail {

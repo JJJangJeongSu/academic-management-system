@@ -16,6 +16,7 @@ export interface Activity {
 }
 
 export interface DashboardData {
+  uid: number;
   type: number;
   subject: {
     count: number;

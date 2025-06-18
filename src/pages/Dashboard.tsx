@@ -17,8 +17,10 @@ const Dashboard: React.FC = () => {
         setData(dashboardData);
         // Store user role in localStorage
         localStorage.setItem('userRole', dashboardData.type.toString());
+        localStorage.setItem('uid', dashboardData.uid.toString());
         console.log("dashboardData: ", dashboardData);
         console.log("userRole: ", localStorage.getItem('userRole'));
+        console.log("uid: ", localStorage.getItem('uid'));
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : '데이터를 불러오는데 실패했습니다.');

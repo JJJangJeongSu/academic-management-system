@@ -192,6 +192,10 @@ export const getNoticeDetail = async (classId: string, postId: string): Promise<
     }
 
     const data: NoticeDetail = await response.json();
+    data.notice.comments.forEach((comment) => {
+      console.log("comment: ", comment);
+      console.log("commentID: ", comment.commentID);
+    });
     return data;
   } catch (error) {
     if (error instanceof Error) {
@@ -440,6 +444,42 @@ export const submitAssignment = async (
       throw new Error('인증이 만료되었습니다.');
     }
     throw new Error('과제 제출에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const deleteNoticeComment = async (
+  commentId: number
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('Authentication required');
+  }
+  console.log("삭제 시도 - commentId: ", commentId);
+  const formData = new FormData();
+  formData.append('CommentID', commentId.toString());
+  const response = await fetch(
+    `${API_BASE_URL}/classNotice/deleteComment`,
+    {
+      method: 'POST', // 또는 GET이 아니라면 POST
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CommentID: commentId, // 숫자 그대로 OK
+      }),
+    }
+  );
+  
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Authentication expired');
+    }
+    console.log("삭제 실패 - status: ", response.status);
+    throw new Error('Failed to delete comment');
   }
 
   return response.json();

@@ -82,7 +82,7 @@ const CourseDetail: React.FC = () => {
   if (error) return <div className="text-red-500">{error}</div>;
   if (!courseData) return <div>강의 정보가 없습니다.</div>;
 
-  const isProfessor = user?.role === 'professor';
+  const isProfessor = localStorage.getItem('userRole') === '2';
   const canWrite = courseData.subject.writeEnable === 1;
 
   return (
