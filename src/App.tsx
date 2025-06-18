@@ -10,7 +10,6 @@ import CourseDetail from './pages/CourseDetail';
 import Assignments from './pages/Assignments';
 import Grades from './pages/Grades';
 import Timetable from './pages/Timetable';
-import ManageStudents from './pages/ManageStudents';
 import AccountManagement from './pages/AccountManagement';
 import CourseManagement from './pages/CourseManagement';
 import NotFound from './pages/NotFound';
@@ -52,7 +51,6 @@ const App: React.FC = () => {
           <Route path="/assignments" element={<Assignments />} />
           <Route path="/grades" element={<Grades />} />
           <Route path="/timetable" element={<Timetable />} />
-          <Route path="/manage-students" element={<ManageStudents />} />
           <Route path="/account-management" element={<AccountManagement />} />
           <Route path="/course-management" element={<CourseManagement />} />
         </Route>

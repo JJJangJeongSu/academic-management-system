@@ -32,4 +32,28 @@ export const getAllAccounts = async (): Promise<AccountsResponse> => {
   }
 
   return response.json();
+};
+
+export interface AddAccountRequest {
+  userid: string;
+  name: string;
+  passwd: string;
+  email: string;
+  type: number;  // 0: 관리자, 1: 학생, 2: 교수
+  status: 'active' | 'inactive';
+}
+
+export const addAccount = async (accountData: AddAccountRequest): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/addAccount`, {
+    method: 'POST',
+    headers: {
+      'Authorization': ADMIN_TOKEN,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(accountData),
+  });
+
+  if (!response.ok) {
+    throw new Error('계정 등록에 실패했습니다.');
+  }
 }; 

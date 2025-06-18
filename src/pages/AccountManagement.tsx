@@ -34,14 +34,8 @@ const AccountManagement: React.FC = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-bold text-secondary-900 mb-6">계정 관리</h1>
+        <h1 className="text-2xl font-bold text-secondary-900 mb-6">계정 조회</h1>
         
-        <div className="mb-4">
-          <button className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 transition-colors">
-            새 계정 추가
-          </button>
-        </div>
-
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -51,7 +45,6 @@ const AccountManagement: React.FC = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">이메일</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">역할</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">관리</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -81,10 +74,6 @@ const AccountManagement: React.FC = () => {
                         : (account.status === 'active' ? '활성' : '비활성')
                       }
                     </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button className="text-primary-600 hover:text-primary-900 mr-2">수정</button>
-                    <button className="text-red-600 hover:text-red-900">삭제</button>
                   </td>
                 </tr>
               ))}
