@@ -483,4 +483,68 @@ export const deleteNoticeComment = async (
   }
 
   return response.json();
+};
+
+export const deleteCourseMaterialComment = async (
+  commentId: number
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classCourse/deleteComment`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CommentID: commentId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('댓글 삭제에 실패했습니다.');
+  }
+
+  return response.json();
+};
+
+export const deleteAssignmentComment = async (
+  commentId: number
+): Promise<{ message: string }> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('인증되지 않은 사용자입니다.');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/classAssignment/deleteComment`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        CommentID: commentId,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('인증이 만료되었습니다.');
+    }
+    throw new Error('과제 제출 삭제에 실패했습니다.');
+  }
+
+  return response.json();
 }; 
